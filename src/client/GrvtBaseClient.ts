@@ -1,11 +1,18 @@
 import { GrvtConfig, GrvtEndpointVersion } from '../types';
 import { GrvtEndpoints } from '../api';
 import { getCookieWithExpiration } from '../utils/cookie';
+import { GrvtError } from '../types/error';
 
 interface GrvtCookie {
   gravity: string;
   expires: number;
   XGrvtAccountId?: string;
+}
+
+interface ApiResponseWithCode {
+  code?: number;
+  message?: string;
+  status?: number;
 }
 
 export class GrvtBaseClient {
@@ -41,7 +48,7 @@ export class GrvtBaseClient {
         headers: this.getHeaders(),
       });
 
-      const data = (await response.json()) as ResponseData;
+      const data = await this.handleResponse<ResponseData>(response);
       this.pathReturnValueMap[endpoint] = data;
       return data;
     } catch (error) {
@@ -61,12 +68,21 @@ export class GrvtBaseClient {
         body: JSON.stringify(payload),
       });
 
-      const data = (await response.json()) as ResponseData;
+      const data = await this.handleResponse<ResponseData>(response);
       this.pathReturnValueMap[endpoint] = data;
       return data;
     } catch (error) {
       throw new Error(error instanceof Error ? error.message : 'Unknown error');
     }
+  }
+
+  private async handleResponse<T>(response: Response): Promise<T> {
+    const respJson = await response.json();
+    const resp = respJson as ApiResponseWithCode;
+    if (resp.code) {
+      throw new GrvtError(resp.code, resp.message || 'Unknown error', resp.status);
+    }
+    return respJson as T;
   }
 
   private getHeaders(): Record<string, string> {

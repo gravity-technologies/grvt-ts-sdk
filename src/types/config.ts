@@ -23,11 +23,3 @@ export const CHAIN_IDS: Record<GrvtEnvironment, number> = {
   [GrvtEnvironment.TESTNET]: 326,
   [GrvtEnvironment.PRODUCTION]: 325,
 };
-
-export const getEIP712DomainData = (env: GrvtEnvironment, chainId?: number): { name: string; version: string; chainId: number } => {
-  return {
-    name: 'GRVT Exchange',
-    version: '0',
-    chainId: chainId || CHAIN_IDS[env],
-  };
-};
