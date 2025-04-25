@@ -1,0 +1,17 @@
+# Build output
+dist/
+coverage/
+
+# Dependency folders
+node_modules/
+
+# Ignore TypeScript declaration files
+*.d.ts
+
+# Ignore compiled or JS fallback files (optional, if you only want to lint .ts)
+*.js
+
+# Optional: ignore specific test artifacts or snapshots
+*.test.ts
+*.spec.ts
+__snapshots__/

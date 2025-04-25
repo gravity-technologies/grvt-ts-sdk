@@ -1,5 +1,5 @@
 import { GrvtConfig, GrvtEndpointVersion } from '../types';
-import { GrvtEndpoints } from '../types/endpoints';
+import { GrvtEndpoints } from '../api';
 import { getCookieWithExpiration } from '../utils/cookie';
 
 interface GrvtCookie {
@@ -17,7 +17,10 @@ export class GrvtBaseClient {
 
   constructor(config: GrvtConfig) {
     this.config = config;
-    this.endpoints = new GrvtEndpoints(config.env, config.endpointVersion || GrvtEndpointVersion.V1);
+    this.endpoints = new GrvtEndpoints(
+      config.env,
+      config.endpointVersion || GrvtEndpointVersion.V1
+    );
   }
 
   protected async authenticatedGet<RequestParams = Record<string, any>, ResponseData = any>(
@@ -38,7 +41,7 @@ export class GrvtBaseClient {
         headers: this.getHeaders(),
       });
 
-      const data = await response.json() as ResponseData;
+      const data = (await response.json()) as ResponseData;
       this.pathReturnValueMap[endpoint] = data;
       return data;
     } catch (error) {
@@ -55,10 +58,10 @@ export class GrvtBaseClient {
       const response = await fetch(endpoint, {
         method: 'POST',
         headers: this.getHeaders(),
-        body: JSON.stringify(payload)
+        body: JSON.stringify(payload),
       });
 
-      const data = await response.json() as ResponseData;
+      const data = (await response.json()) as ResponseData;
       this.pathReturnValueMap[endpoint] = data;
       return data;
     } catch (error) {
@@ -99,7 +102,9 @@ export class GrvtBaseClient {
     const isCookieFresh = timeTillExpiration !== null && timeTillExpiration > 5;
 
     if (!isCookieFresh) {
-      console.info(`Cookie should be refreshed, time till expiration: ${timeTillExpiration} seconds`);
+      console.info(
+        `Cookie should be refreshed, time till expiration: ${timeTillExpiration} seconds`
+      );
     }
 
     return !isCookieFresh;
@@ -132,4 +137,4 @@ export class GrvtBaseClient {
   protected wasPathCalled(path: string): boolean {
     return path in this.pathReturnValueMap;
   }
-} 
+}

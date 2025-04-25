@@ -1,16 +1,16 @@
 {
-  "name": "grrt-ts-sdk",
+  "name": "grvt-ts-sdk",
   "version": "1.0.0",
   "description": "TypeScript SDK for GRVT",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
+  "type": "module",
   "scripts": {
     "build": "tsc",
-    "test": "jest",
-    "lint": "eslint . --ext .ts",
+    "lint": "eslint src --ext .ts",
     "format": "prettier --write \"src/**/*.ts\"",
     "prepare": "npm run build",
-    "prepublishOnly": "npm test && npm run lint",
+    "prepublishOnly": "npm run lint",
     "preversion": "npm run lint",
     "version": "npm run format && git add -A src",
     "postversion": "git push && git push --tags"
@@ -25,14 +25,18 @@
   "author": "",
   "license": "MIT",
   "devDependencies": {
-    "@types/jest": "^29.5.12",
     "@types/set-cookie-parser": "^2.4.10",
-    "jest": "^29.7.0",
-    "ts-jest": "^29.1.2",
+    "@typescript-eslint/eslint-plugin": "^8.31.0",
+    "@typescript-eslint/parser": "^8.31.0",
+    "eslint": "^9.25.1",
+    "eslint-config-prettier": "^10.1.2",
+    "eslint-plugin-prettier": "^5.2.6",
+    "prettier": "^3.5.3",
     "ts-node": "^10.9.2",
-    "typescript": "^5.3.3"
+    "typescript": "^5.8.3"
   },
   "dependencies": {
+    "ethers": "^6.13.5",
     "set-cookie-parser": "^2.7.1"
   }
 }

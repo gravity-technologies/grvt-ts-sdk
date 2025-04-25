@@ -1,4 +1,4 @@
-import { Currency, MarginType } from './index';
+import { Currency, MarginType } from './currency';
 
 export interface SpotBalance {
   currency: Currency;

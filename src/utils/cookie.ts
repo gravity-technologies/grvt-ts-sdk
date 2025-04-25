@@ -6,7 +6,10 @@ interface GrvtCookie {
   XGrvtAccountId?: string;
 }
 
-export async function getCookieWithExpiration(path: string, apiKey: string | null): Promise<GrvtCookie | null> {
+export async function getCookieWithExpiration(
+  path: string,
+  apiKey: string | null
+): Promise<GrvtCookie | null> {
   if (!apiKey) {
     return null;
   }
@@ -27,7 +30,7 @@ export async function getCookieWithExpiration(path: string, apiKey: string | nul
 
     const cookieHeader = response.headers.get('Set-Cookie');
     const accountId = response.headers.get('X-Grvt-Account-Id');
-    
+
     if (!cookieHeader) {
       console.warn('No cookie header in response');
       return null;
@@ -35,8 +38,10 @@ export async function getCookieWithExpiration(path: string, apiKey: string | nul
 
     // Parse the cookie header using set-cookie-parser
     const cookies = setCookieParser.parse(cookieHeader);
-    const gravityCookie = cookies.find((cookie: setCookieParser.Cookie) => cookie.name === 'gravity');
-    
+    const gravityCookie = cookies.find(
+      (cookie: setCookieParser.Cookie) => cookie.name === 'gravity'
+    );
+
     if (!gravityCookie) {
       console.warn('No gravity cookie in response');
       return null;
@@ -50,10 +55,10 @@ export async function getCookieWithExpiration(path: string, apiKey: string | nul
     return {
       gravity: gravityCookie.value,
       expires: gravityCookie.expires.getTime() / 1000, // Convert to Unix timestamp
-      XGrvtAccountId: accountId || undefined
+      XGrvtAccountId: accountId || undefined,
     };
   } catch (error) {
     console.error('Error getting cookie:', error);
     return null;
   }
-} 
+}
