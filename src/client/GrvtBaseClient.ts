@@ -81,12 +81,6 @@ export class GrvtBaseClient {
     return headers;
   }
 
-  protected checkAccountAuth(): void {
-    if (!this.config.tradingAccountId) {
-      throw new Error('This action requires a trading account ID');
-    }
-  }
-
   protected checkValidSymbol(symbol: string): void {
     if (!this.markets) {
       throw new Error('Markets not loaded');
@@ -105,7 +99,7 @@ export class GrvtBaseClient {
     const isCookieFresh = timeTillExpiration !== null && timeTillExpiration > 5;
 
     if (!isCookieFresh) {
-      console.info(`Cookie should be refreshed. Current cookie: ${this.cookie}, time till expiration: ${timeTillExpiration} seconds`);
+      console.info(`Cookie should be refreshed, time till expiration: ${timeTillExpiration} seconds`);
     }
 
     return !isCookieFresh;
@@ -121,7 +115,7 @@ export class GrvtBaseClient {
     this.pathReturnValueMap[path] = this.cookie;
 
     if (this.cookie) {
-      console.info(`Refreshed cookie: ${this.cookie}`);
+      console.info('Cookie refreshed');
     }
 
     return this.cookie;

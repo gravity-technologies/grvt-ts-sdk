@@ -38,6 +38,20 @@ export interface SubAccount {
   settle_index_price: string;
 }
 
+export interface ApiSubAccountSummaryRequest {
+  sub_account_id: string;
+}
+
 export interface ApiSubAccountSummaryResponse {
   result: SubAccount;
-} 
+}
+
+export interface FundingAccountSummary {
+  main_account_id: string;
+  total_equity: string;
+  spot_balances: SpotBalance[];
+}
+
+export interface ApiFundingAccountSummaryResponse {
+  result: FundingAccountSummary;
+}

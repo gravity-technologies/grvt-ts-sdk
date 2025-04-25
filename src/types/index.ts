@@ -54,7 +54,7 @@ export enum GrvtEnvironment {
 }
 
 export enum GrvtEndpointVersion {
-  V1 = 'V1'
+  V1 = 'v1'
 }
 
 export interface GrvtConfig {

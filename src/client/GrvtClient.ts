@@ -1,6 +1,6 @@
 import { GrvtConfig } from '../types';
 import { GrvtBaseClient } from './GrvtBaseClient';
-import { ApiSubAccountSummaryResponse } from '../types/account';
+import { ApiSubAccountSummaryResponse, ApiFundingAccountSummaryResponse, ApiSubAccountSummaryRequest } from '../types/account';
 
 export class GrvtClient extends GrvtBaseClient {
   constructor(config: GrvtConfig) {
@@ -8,11 +8,18 @@ export class GrvtClient extends GrvtBaseClient {
   }
 
   /**
-   * Get account summary for the trading account
-   * @returns Promise with account summary data
+   * Get funding account summary
+   * @returns Promise with funding account summary data
    */
-  async getAccountSummary(): Promise<ApiSubAccountSummaryResponse> {
-    this.checkAccountAuth();
-    return this.authenticatedGet<{}, ApiSubAccountSummaryResponse>(this.endpoints.getAccountSummary);
+  async getFundingAccountSummary(): Promise<ApiFundingAccountSummaryResponse> {
+    return this.authenticatedPost<{}, ApiFundingAccountSummaryResponse>(this.endpoints.getFundingAccountSummary, {});
+  }
+
+  /**
+   * Get sub account summary
+   * @returns Promise with sub account summary data
+   */
+  async getSubAccountSummary(tradingAccountId: string): Promise<ApiSubAccountSummaryResponse> {
+    return this.authenticatedPost<ApiSubAccountSummaryRequest, ApiSubAccountSummaryResponse>(this.endpoints.getAccountSummary, { sub_account_id: tradingAccountId });
   }
 } 
