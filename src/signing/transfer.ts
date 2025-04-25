@@ -1,8 +1,7 @@
 import { ethers } from 'ethers';
-import { Transfer, Currency } from '../types';
 import { GrvtEnvironment } from '../types/config';
 import { getEIP712DomainData } from './common';
-
+import { ApiTransferRequest, Currency, GenerateDefaultSignature } from '../types';
 const EIP712_TRANSFER_MESSAGE_TYPE = {
   Transfer: [
     { name: 'fromAccount', type: 'address' },
@@ -27,34 +26,37 @@ interface EIP712TransferMessageData {
   expiration: string;
 }
 
-const buildEIP712TransferMessageData = (transfer: Transfer): EIP712TransferMessageData => {
+const buildEIP712TransferMessageData = (
+  transfer: ApiTransferRequest
+): EIP712TransferMessageData => {
   return {
     fromAccount: transfer.from_account_id,
     fromSubAccount: transfer.from_sub_account_id,
     toAccount: transfer.to_account_id,
     toSubAccount: transfer.to_sub_account_id,
-    tokenCurrency: Number(Currency[transfer.currency]),
-    numTokens: Number(ethers.parseUnits(transfer.num_tokens, 6)), // USDT has 6 decimals
+    tokenCurrency: Object.keys(Currency).indexOf(transfer.currency) + 1,
+    numTokens: Math.floor(parseFloat(transfer.num_tokens) * 1e6),
     nonce: transfer.signature.nonce,
     expiration: transfer.signature.expiration,
   };
 };
 
 export const signTransfer = async (
-  transfer: Transfer,
+  transfer: ApiTransferRequest,
   privateKey: string,
   env: GrvtEnvironment
-): Promise<Transfer> => {
+): Promise<ApiTransferRequest> => {
   if (!privateKey) {
     throw new Error('Private key is not set');
   }
 
+  // TODO: find better API here
+  transfer.signature = GenerateDefaultSignature();
+
   const domain = getEIP712DomainData(env);
   const messageData = buildEIP712TransferMessageData(transfer);
-
   const wallet = new ethers.Wallet(privateKey);
   const signature = await wallet.signTypedData(domain, EIP712_TRANSFER_MESSAGE_TYPE, messageData);
-
   const { r, s, v } = ethers.Signature.from(signature);
 
   transfer.signature.r = `0x${r.slice(2)}`;

@@ -1,5 +1,5 @@
 import { GrvtConfig, GrvtEndpointVersion } from '../types';
-import { GrvtEndpoints } from '../api';
+import { GrvtEndpoints } from '../api/endpoints';
 import { getCookieWithExpiration } from '../utils/cookie';
 import { GrvtError } from '../types/error';
 
@@ -62,6 +62,7 @@ export class GrvtBaseClient {
   ): Promise<ResponseData> {
     try {
       await this.refreshCookie();
+      console.log('payload', JSON.stringify(payload, null, 2));
       const response = await fetch(endpoint, {
         method: 'POST',
         headers: this.getHeaders(),

@@ -7,18 +7,6 @@ export enum TransferType {
   FAST_ARB_WITHDRAWAL = 'FAST_ARB_WITHDRAWAL',
 }
 
-export interface Transfer {
-  from_account_id: string;
-  from_sub_account_id: string;
-  to_account_id: string;
-  to_sub_account_id: string;
-  currency: Currency;
-  num_tokens: string;
-  signature: Signature;
-  transfer_type: TransferType;
-  transfer_metadata: string;
-}
-
 export interface TransferHistory {
   tx_id: string;
   from_account_id: string;
@@ -40,9 +28,9 @@ export interface ApiTransferRequest {
   to_sub_account_id: string;
   currency: Currency;
   num_tokens: string;
-  signature: Signature;
   transfer_type: TransferType;
   transfer_metadata: string;
+  signature: Signature;
 }
 
 export interface ApiTransferHistoryRequest {

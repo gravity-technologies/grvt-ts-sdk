@@ -11,7 +11,6 @@ import {
   ApiTransferHistoryResponse,
 } from '../types/transfer';
 import { signTransfer } from '../signing/transfer';
-
 export class GrvtClient extends GrvtBaseClient {
   constructor(config: GrvtConfig) {
     super(config);
@@ -50,7 +49,6 @@ export class GrvtClient extends GrvtBaseClient {
     }
 
     const signedTransfer = await signTransfer(request, this.config.apiSecret, this.config.env);
-
     return this.authenticatedPost<ApiTransferRequest, { result: string }>(
       this.endpoints.transfer,
       signedTransfer
