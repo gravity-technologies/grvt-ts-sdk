@@ -1,5 +1,5 @@
 import { Currency } from './currency';
-import { Signature } from './common';
+import { Signature } from './signature';
 
 export enum TransferType {
   STANDARD = 'STANDARD',
@@ -30,7 +30,7 @@ export interface ApiTransferRequest {
   num_tokens: string;
   transfer_type: TransferType;
   transfer_metadata: string;
-  signature: Signature;
+  signature?: Signature;
 }
 
 export interface ApiTransferHistoryRequest {

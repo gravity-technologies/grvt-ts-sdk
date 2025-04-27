@@ -36,8 +36,8 @@ const buildEIP712TransferMessageData = (
     toSubAccount: transfer.to_sub_account_id,
     tokenCurrency: Object.keys(Currency).indexOf(transfer.currency) + 1,
     numTokens: Math.floor(parseFloat(transfer.num_tokens) * 1e6),
-    nonce: transfer.signature.nonce,
-    expiration: transfer.signature.expiration,
+    nonce: transfer.signature?.nonce ?? 0,
+    expiration: transfer.signature?.expiration ?? '',
   };
 };
 
@@ -50,9 +50,9 @@ export const signTransfer = async (
     throw new Error('Private key is not set');
   }
 
-  // TODO: find better API here
-  transfer.signature = GenerateDefaultSignature();
-
+  if (!transfer.signature) {
+    transfer.signature = GenerateDefaultSignature();
+  }
   const domain = getEIP712DomainData(env);
   const messageData = buildEIP712TransferMessageData(transfer);
   const wallet = new ethers.Wallet(privateKey);
