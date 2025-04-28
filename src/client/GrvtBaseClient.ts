@@ -19,7 +19,6 @@ export class GrvtBaseClient {
     this.edgeBaseUrl = `https://edge.${this.domain}`;
   }
 
-
   protected shouldRefreshCookie(): boolean {
     if (!this.config.apiKey) {
       return false;

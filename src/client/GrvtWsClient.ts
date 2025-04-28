@@ -16,68 +16,67 @@ export class GrvtWsClient extends GrvtBaseClient {
   private lastMessageTime: number = Date.now();
   private messageCheckInterval: NodeJS.Timeout | null = null;
 
-  constructor(config: {
-    apiKey: string;
-    env: GrvtEnvironment;
-  }) {
+  constructor(config: { apiKey: string; env: GrvtEnvironment }) {
     super(config);
-    this.url = this.getWebSocketUrl(config.env);
+    this.url = this.getWebSocketUrl();
   }
 
   // Only support TDG for now, can be extended to support MDG/other streams in the future
-  private getWebSocketUrl(env: GrvtEnvironment): string {
+  private getWebSocketUrl(): string {
     return `wss://trades.${this.domain}/ws/full`;
   }
 
   public async connect(): Promise<void> {
     return new Promise((resolve, reject) => {
       // Get authentication parameters before creating the WebSocket
-      this.refreshCookie().then(() => {
-        const headers: Record<string, string> = {};
+      this.refreshCookie()
+        .then(() => {
+          const headers: Record<string, string> = {};
 
-        if (this.cookie?.gravity) {
-          headers['Cookie'] = `gravity=${this.cookie.gravity}`;
-        }
-        if (this.cookie?.XGrvtAccountId) {
-          headers['X-Grvt-Account-Id'] = this.cookie.XGrvtAccountId;
-        }
-
-        this.ws = new WebSocket(this.url, {
-          headers,
-        });
-
-        this.ws.on('open', () => {
-          console.log('WebSocket connected');
-          this.reconnectAttempts = 0;
-          this.startMessageCheck();
-          resolve();
-        });
-
-        this.ws.on('message', (data: string) => {
-          try {
-            const message = JSON.parse(data);
-            this.lastMessageTime = Date.now();
-            const handler = this.messageHandlers.get(message.stream + '.' + message.selector);
-            if (handler) {
-              handler(message.feed);
-            }
-          } catch (error) {
-            console.error('Error parsing message:', error);
+          if (this.cookie?.gravity) {
+            headers['Cookie'] = `gravity=${this.cookie.gravity}`;
           }
-        });
+          if (this.cookie?.XGrvtAccountId) {
+            headers['X-Grvt-Account-Id'] = this.cookie.XGrvtAccountId;
+          }
 
-        this.ws.on('error', (error) => {
-          console.error('WebSocket error:', error);
-          this.handleReconnect();
-          reject(error);
-        });
+          this.ws = new WebSocket(this.url, {
+            headers,
+          });
 
-        this.ws.on('close', () => {
-          console.log('WebSocket disconnected');
-          this.stopMessageCheck();
-          this.handleReconnect();
-        });
-      }).catch(reject);
+          this.ws.on('open', () => {
+            console.log('WebSocket connected');
+            this.reconnectAttempts = 0;
+            this.startMessageCheck();
+            resolve();
+          });
+
+          this.ws.on('message', (data: string) => {
+            try {
+              const message = JSON.parse(data);
+              this.lastMessageTime = Date.now();
+              const handler = this.messageHandlers.get(message.stream + '.' + message.selector);
+              if (handler) {
+                handler(message.feed);
+              }
+            } catch (error) {
+              console.error('Error parsing message:', error);
+            }
+          });
+
+          this.ws.on('error', (error) => {
+            console.error('WebSocket error:', error);
+            this.handleReconnect();
+            reject(error);
+          });
+
+          this.ws.on('close', () => {
+            console.log('WebSocket disconnected');
+            this.stopMessageCheck();
+            this.handleReconnect();
+          });
+        })
+        .catch(reject);
     });
   }
 
@@ -104,13 +103,15 @@ export class GrvtWsClient extends GrvtBaseClient {
     if (this.reconnectAttempts < this.maxReconnectAttempts) {
       this.reconnectAttempts++;
       const delay = Math.min(1000 * Math.pow(2, this.reconnectAttempts), 30000);
-      
+
       if (this.reconnectTimeout) {
         clearTimeout(this.reconnectTimeout);
       }
 
       this.reconnectTimeout = setTimeout(() => {
-        console.log(`Attempting to reconnect (${this.reconnectAttempts}/${this.maxReconnectAttempts})...`);
+        console.log(
+          `Attempting to reconnect (${this.reconnectAttempts}/${this.maxReconnectAttempts})...`
+        );
         this.connect().catch(console.error);
       }, delay);
     }
@@ -134,7 +135,7 @@ export class GrvtWsClient extends GrvtBaseClient {
         stream,
         selectors: [selector],
       },
-      id: ++this.subscriptionId
+      id: ++this.subscriptionId,
     };
 
     this.ws.send(JSON.stringify(message));
@@ -153,4 +154,4 @@ export class GrvtWsClient extends GrvtBaseClient {
       this.ws = null;
     }
   }
-} 
+}
