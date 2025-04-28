@@ -2,6 +2,9 @@ import { signTransfer } from '../signing/transfer';
 import { ApiTransferRequest } from '../types';
 import { GrvtConfig } from '../types/config';
 import { GrvtBaseClient } from './GrvtBaseClient';
+import { AxiosRequestConfig, AxiosHeaders } from 'axios';
+import { TDG, MDG } from 'grvt';
+import { Wallet } from 'ethers';
 import {
   IApiSubAccountSummaryResponse,
   IApiFundingAccountSummaryResponse,
@@ -14,8 +17,25 @@ import {
 } from 'grvt';
 
 export class GrvtClient extends GrvtBaseClient {
+  protected tdgClient: TDG;
+  protected mdgClient: MDG;
+  protected wallet?: Wallet;
+  protected tradesBaseUrl: string;
+  protected marketDataBaseUrl: string;
+
   constructor(config: GrvtConfig) {
     super(config);
+    this.tradesBaseUrl = `https://trades.${this.domain}`;
+    this.marketDataBaseUrl = `https://market-data.${this.domain}`;
+    this.tdgClient = new TDG({
+      host: this.tradesBaseUrl,
+    });
+    this.mdgClient = new MDG({
+      host: this.marketDataBaseUrl,
+    });
+    if (config.apiSecret) {
+      this.wallet = new Wallet(config.apiSecret);
+    }
   }
 
   /**
@@ -75,5 +95,26 @@ export class GrvtClient extends GrvtBaseClient {
   ): Promise<IApiTransferHistoryResponse> {
     const config = await this.authenticatedEndpoint();
     return this.tdgClient.transferHistory(request, config);
+  }
+
+  private async authenticatedEndpoint(): Promise<AxiosRequestConfig> {
+    await this.refreshCookie();
+    return this.getAxiosConfig();
+  }
+
+  private getAxiosConfig(): AxiosRequestConfig {
+    let headers = new AxiosHeaders();
+    headers = headers.set('Content-Type', 'application/json');
+
+    if (this.cookie?.gravity) {
+      headers = headers.set('Cookie', `gravity=${this.cookie.gravity}`);
+    }
+    if (this.cookie?.XGrvtAccountId) {
+      headers = headers.set('X-Grvt-Account-Id', this.cookie.XGrvtAccountId);
+    }
+
+    return {
+      headers,
+    };
   }
 }
