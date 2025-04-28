@@ -1,8 +1,8 @@
-import { GrvtConfig, GrvtEndpointVersion } from '../types';
-import { GrvtEndpoints } from '../api/endpoints';
+import { GrvtConfig, GrvtEnvironment } from '../types';
 import { getCookieWithExpiration } from '../utils/cookie';
 import { GrvtError } from '../types/error';
-
+import { TDG, MDG } from 'grvt';
+import { AxiosRequestConfig, AxiosHeaders } from 'axios';
 interface GrvtCookie {
   gravity: string;
   expires: number;
@@ -17,97 +17,49 @@ interface ApiResponseWithCode {
 
 export class GrvtBaseClient {
   protected config: GrvtConfig;
-  protected endpoints: GrvtEndpoints;
-  protected markets: Record<string, any> | null = null;
   protected cookie: GrvtCookie | null = null;
-  protected pathReturnValueMap: Record<string, any> = {};
+  protected edgeBaseUrl: string;
+  protected tradesBaseUrl: string;
+  protected marketDataBaseUrl: string;
+  protected TDG: TDG;
+  protected MDG: MDG;
 
   constructor(config: GrvtConfig) {
     this.config = config;
-    this.endpoints = new GrvtEndpoints(
-      config.env,
-      config.endpointVersion || GrvtEndpointVersion.V1
-    );
-  }
-
-  protected async authenticatedGet<RequestParams = Record<string, any>, ResponseData = any>(
-    endpoint: string,
-    params?: RequestParams
-  ): Promise<ResponseData> {
-    try {
-      await this.refreshCookie();
-      const url = new URL(endpoint);
-      if (params) {
-        Object.entries(params).forEach(([key, value]) => {
-          url.searchParams.append(key, String(value));
-        });
-      }
-
-      const response = await fetch(url.toString(), {
-        method: 'GET',
-        headers: this.getHeaders(),
-      });
-
-      const data = await this.handleResponse<ResponseData>(response);
-      this.pathReturnValueMap[endpoint] = data;
-      return data;
-    } catch (error) {
-      throw new Error(error instanceof Error ? error.message : 'Unknown error');
+    const domain = this.getDomain();
+    this.edgeBaseUrl = `https://edge.${domain}`;
+    this.tradesBaseUrl = `https://trades.${domain}`;
+    this.marketDataBaseUrl = `https://market-data.${domain}`;
+    this.TDG = new TDG({
+      host: this.tradesBaseUrl,
+    });
+    this.MDG = new MDG({
+      host: this.marketDataBaseUrl,
+    });
+    if (!this.TDG.axios || !this.MDG.axios) {
+      throw new Error('Failed to initialize TDG or MDG');
     }
   }
 
-  protected async authenticatedPost<RequestData = Record<string, any>, ResponseData = any>(
-    endpoint: string,
-    payload: RequestData
-  ): Promise<ResponseData> {
-    try {
-      await this.refreshCookie();
-      console.log('payload', JSON.stringify(payload, null, 2));
-      const response = await fetch(endpoint, {
-        method: 'POST',
-        headers: this.getHeaders(),
-        body: JSON.stringify(payload),
-      });
-
-      const data = await this.handleResponse<ResponseData>(response);
-      this.pathReturnValueMap[endpoint] = data;
-      return data;
-    } catch (error) {
-      throw new Error(error instanceof Error ? error.message : 'Unknown error');
-    }
+  protected async authenticatedEndpoint(): Promise<AxiosRequestConfig> {
+    await this.refreshCookie();
+    return this.getAxiosConfig()
   }
 
-  private async handleResponse<T>(response: Response): Promise<T> {
-    const respJson = await response.json();
-    const resp = respJson as ApiResponseWithCode;
-    if (resp.code) {
-      throw new GrvtError(resp.code, resp.message || 'Unknown error', resp.status);
-    }
-    return respJson as T;
-  }
+  private getAxiosConfig(): AxiosRequestConfig {
+    let headers = new AxiosHeaders();
+    headers = headers.set('Content-Type', 'application/json');
 
-  private getHeaders(): Record<string, string> {
-    const headers: Record<string, string> = {
-      'Content-Type': 'application/json',
+    if (this.cookie?.gravity) {
+      headers = headers.set('Cookie', `gravity=${this.cookie.gravity}`);
+    }
+    if (this.cookie?.XGrvtAccountId) {
+      headers = headers.set('X-Grvt-Account-Id', this.cookie.XGrvtAccountId);
+    }
+
+    return {
+      headers,
     };
-
-    if (this.cookie) {
-      headers['Cookie'] = `gravity=${this.cookie.gravity}`;
-      if (this.cookie.XGrvtAccountId) {
-        headers['X-Grvt-Account-Id'] = this.cookie.XGrvtAccountId;
-      }
-    }
-
-    return headers;
-  }
-
-  protected checkValidSymbol(symbol: string): void {
-    if (!this.markets) {
-      throw new Error('Markets not loaded');
-    }
-    if (!this.markets[symbol]) {
-      throw new Error(`Symbol ${symbol} not found`);
-    }
   }
 
   protected shouldRefreshCookie(): boolean {
@@ -132,9 +84,8 @@ export class GrvtBaseClient {
       return this.cookie;
     }
 
-    const path = this.endpoints.auth;
+    const path = this.edgeBaseUrl + '/auth/api_key/login';
     this.cookie = await getCookieWithExpiration(path, this.config.apiKey || null);
-    this.pathReturnValueMap[path] = this.cookie;
 
     if (this.cookie) {
       console.info('Cookie refreshed');
@@ -143,15 +94,18 @@ export class GrvtBaseClient {
     return this.cookie;
   }
 
-  protected getPathReturnValueMap(): Record<string, any> {
-    return this.pathReturnValueMap;
-  }
-
-  protected getEndpointReturnValue(endpoint: string): any {
-    return this.pathReturnValueMap[endpoint];
-  }
-
-  protected wasPathCalled(path: string): boolean {
-    return path in this.pathReturnValueMap;
+  private getDomain(): string {
+    switch (this.config.env) {
+      case GrvtEnvironment.PRODUCTION:
+        return 'grvt.io';
+      case GrvtEnvironment.TESTNET:
+        return 'testnet.grvt.io';
+      case GrvtEnvironment.STAGING:
+        return 'staging.gravitymarkets.io';
+      case GrvtEnvironment.DEV:
+        return 'dev.gravitymarkets.io';
+      default:
+        throw new Error(`Unknown environment: ${this.config.env}`);
+    }
   }
 }

@@ -1,14 +1,14 @@
 import { GrvtClient, GrvtEnvironment, Currency, TransferType } from '../src';
 
-const fundingAccountID = '';
-const tradingAccountId1 = '';
+const fundingAccountID = '0x9132e2488b68e26d002568e88e125302a5a93694';
+const tradingAccountId1 = '549476441678499';
 
 async function testGetFundingAccountSummary(client: GrvtClient) {
   try {
     // Test getAccountSummary
     console.log('Fetching account summary...');
     const accountSummary = await client.getFundingAccountSummary();
-    console.log('Account Summary:', JSON.stringify(accountSummary, null, 2));
+    console.log('Account Summary:', accountSummary);
   } catch (error) {
     console.error('Error:', error);
   }
@@ -18,29 +18,39 @@ async function testGetSubAccountSummary(client: GrvtClient, tradingAccountId: st
   try {
     // Test getSubAccountSummary
     console.log(`Fetching sub account summary of trading account ${tradingAccountId}...`);
-    const subAccountSummary = await client.getSubAccountSummary(tradingAccountId);
-    console.log(`Sub Account Summary of trading account ${tradingAccountId}:`, JSON.stringify(subAccountSummary, null, 2));
+    const subAccountSummary = await client.getSubAccountSummary({ sub_account_id: BigInt(tradingAccountId) });
+    console.log(`Sub Account Summary of trading account ${tradingAccountId}:`, subAccountSummary);
   } catch (error) {
     console.error('Error:', error);
   }
 }
 
-async function testTransfer(client: GrvtClient) {
-  const recipientAccountId = '';
-  // Test transfer
-  const transfer = await client.transfer({
-    from_account_id: fundingAccountID,
-    from_sub_account_id: '0',
-    to_account_id: recipientAccountId,
-    to_sub_account_id: '0',
-    currency: Currency.USDT,
-    num_tokens: '55',
-    transfer_type: TransferType.STANDARD,
-    transfer_metadata: '',
-  });
-
-  console.log('Transfer result:', JSON.stringify(transfer, null, 2));
+async function testGetTransferHistory(client: GrvtClient, fundingAccountId: string) {
+  try {
+    // Test getSubAccountHistory
+    console.log(`Fetching transfer history of funding account id ${fundingAccountId}...`);
+    const history = await client.getTransferHistory({});
+    console.log(`Transfer History of funding account ${fundingAccountId}:`, history);
+  } catch (error) {
+    console.error('Error:', error);
+  }
 }
+// async function testTransfer(client: GrvtClient) {
+//   const recipientAccountId = '';
+//   // Test transfer
+//   const transfer = await client.transfer({
+//     from_account_id: fundingAccountID,
+//     from_sub_account_id: '0',
+//     to_account_id: recipientAccountId,
+//     to_sub_account_id: '0',
+//     currency: Currency.USDT,
+//     num_tokens: '55',
+//     transfer_type: TransferType.STANDARD,
+//     transfer_metadata: '',
+//   });
+
+//   console.log('Transfer result:', JSON.stringify(transfer, null, 2));
+// }
 
 async function main() {
   // Load environment variables
@@ -65,7 +75,8 @@ async function main() {
 
   await testGetFundingAccountSummary(client);
   await testGetSubAccountSummary(client, tradingAccountId1);
-  await testTransfer(client);
+  await testGetTransferHistory(client, fundingAccountID);
+  // await testTransfer(client);
 }
 
 main().catch(console.error); 
