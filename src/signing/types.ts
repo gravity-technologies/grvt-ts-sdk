@@ -25,7 +25,7 @@ export interface EIP712DomainData {
 
 // Note: this is the default domain, for each of the environment, we need to construct a proper domain accordingly
 export const domain: EIP712DomainData = {
-  name: 'GRVT Mainnet',
+  name: 'GRVT Exchange',
   version: '0',
   chainId: 1,
 };

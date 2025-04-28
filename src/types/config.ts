@@ -5,15 +5,10 @@ export enum GrvtEnvironment {
   DEV = 'DEV',
 }
 
-export enum GrvtEndpointVersion {
-  V1 = 'v1',
-}
-
 export interface GrvtConfig {
   apiKey?: string;
   apiSecret?: string;
   tradingAccountId?: string;
-  endpointVersion?: GrvtEndpointVersion;
   env: GrvtEnvironment;
 }
 
