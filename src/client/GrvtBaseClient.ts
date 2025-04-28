@@ -1,18 +1,13 @@
 import { GrvtConfig, GrvtEnvironment } from '../types';
 import { getCookieWithExpiration } from '../utils/cookie';
-import { GrvtError } from '../types/error';
 import { TDG, MDG } from 'grvt';
 import { AxiosRequestConfig, AxiosHeaders } from 'axios';
+import { Wallet } from 'ethers';
+
 interface GrvtCookie {
   gravity: string;
   expires: number;
   XGrvtAccountId?: string;
-}
-
-interface ApiResponseWithCode {
-  code?: number;
-  message?: string;
-  status?: number;
 }
 
 export class GrvtBaseClient {
@@ -21,8 +16,9 @@ export class GrvtBaseClient {
   protected edgeBaseUrl: string;
   protected tradesBaseUrl: string;
   protected marketDataBaseUrl: string;
-  protected TDG: TDG;
-  protected MDG: MDG;
+  protected tdgClient: TDG;
+  protected mdgClient: MDG;
+  protected wallet?: Wallet;
 
   constructor(config: GrvtConfig) {
     this.config = config;
@@ -30,20 +26,20 @@ export class GrvtBaseClient {
     this.edgeBaseUrl = `https://edge.${domain}`;
     this.tradesBaseUrl = `https://trades.${domain}`;
     this.marketDataBaseUrl = `https://market-data.${domain}`;
-    this.TDG = new TDG({
+    this.tdgClient = new TDG({
       host: this.tradesBaseUrl,
     });
-    this.MDG = new MDG({
+    this.mdgClient = new MDG({
       host: this.marketDataBaseUrl,
     });
-    if (!this.TDG.axios || !this.MDG.axios) {
-      throw new Error('Failed to initialize TDG or MDG');
+    if (config.apiSecret) {
+      this.wallet = new Wallet(config.apiSecret);
     }
   }
 
   protected async authenticatedEndpoint(): Promise<AxiosRequestConfig> {
     await this.refreshCookie();
-    return this.getAxiosConfig()
+    return this.getAxiosConfig();
   }
 
   private getAxiosConfig(): AxiosRequestConfig {

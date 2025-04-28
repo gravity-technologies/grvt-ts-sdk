@@ -1,35 +1,20 @@
-import { ethers } from 'ethers';
 import { GrvtEnvironment } from '../types/config';
-import { getEIP712DomainData } from './common';
+import { getEIP712DomainData } from './domain';
 import { ApiTransferRequest, Currency, GenerateDefaultSignature } from '../types';
-const EIP712_TRANSFER_MESSAGE_TYPE = {
-  Transfer: [
-    { name: 'fromAccount', type: 'address' },
-    { name: 'fromSubAccount', type: 'uint64' },
-    { name: 'toAccount', type: 'address' },
-    { name: 'toSubAccount', type: 'uint64' },
-    { name: 'tokenCurrency', type: 'uint8' },
-    { name: 'numTokens', type: 'uint64' },
-    { name: 'nonce', type: 'uint32' },
-    { name: 'expiration', type: 'int64' },
-  ],
-};
+import { Signer } from './signer';
+import { Transfer } from './types';
+import { Wallet } from 'ethers';
 
-interface EIP712TransferMessageData {
-  fromAccount: string;
-  fromSubAccount: string;
-  toAccount: string;
-  toSubAccount: string;
-  tokenCurrency: number;
-  numTokens: number;
-  nonce: number;
-  expiration: string;
-}
-
-const buildEIP712TransferMessageData = (
-  transfer: ApiTransferRequest
-): EIP712TransferMessageData => {
-  return {
+export const signTransfer = async (
+  transfer: ApiTransferRequest,
+  wallet: Wallet,
+  env: GrvtEnvironment
+): Promise<ApiTransferRequest> => {
+  if (!transfer.signature) {
+    transfer.signature = GenerateDefaultSignature();
+  }
+  const domain = getEIP712DomainData(env);
+  const messageData = {
     fromAccount: transfer.from_account_id,
     fromSubAccount: transfer.from_sub_account_id,
     toAccount: transfer.to_account_id,
@@ -39,28 +24,15 @@ const buildEIP712TransferMessageData = (
     nonce: transfer.signature?.nonce ?? 0,
     expiration: transfer.signature?.expiration ?? '',
   };
-};
+  const signature = await Signer.sign(wallet.privateKey, {
+    ...Transfer,
+    domain,
+    message: messageData,
+  });
+  const { r, s, v } = Signer.decode(signature);
 
-export const signTransfer = async (
-  transfer: ApiTransferRequest,
-  privateKey: string,
-  env: GrvtEnvironment
-): Promise<ApiTransferRequest> => {
-  if (!privateKey) {
-    throw new Error('Private key is not set');
-  }
-
-  if (!transfer.signature) {
-    transfer.signature = GenerateDefaultSignature();
-  }
-  const domain = getEIP712DomainData(env);
-  const messageData = buildEIP712TransferMessageData(transfer);
-  const wallet = new ethers.Wallet(privateKey);
-  const signature = await wallet.signTypedData(domain, EIP712_TRANSFER_MESSAGE_TYPE, messageData);
-  const { r, s, v } = ethers.Signature.from(signature);
-
-  transfer.signature.r = `0x${r.slice(2)}`;
-  transfer.signature.s = `0x${s.slice(2)}`;
+  transfer.signature.r = r;
+  transfer.signature.s = s;
   transfer.signature.v = v;
   transfer.signature.signer = wallet.address;
 
