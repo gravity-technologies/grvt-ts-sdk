@@ -1,5 +1,6 @@
 import { ECurrency, ETransferType } from 'grvt';
-import { GrvtClient, GrvtEnvironment } from '../src';
+import { GrvtClient } from '../src';
+import { GrvtEnvironment } from '../src/config/config';
 
 const fundingAccountID = '';
 const tradingAccountId1 = '';
@@ -45,7 +46,7 @@ async function testTransfer(client: GrvtClient) {
     from_sub_account_id: '0',
     to_account_id: recipientAccountId,
     to_sub_account_id: '0',
-    currency: ECurrency.USD,
+    currency: ECurrency.USDT,
     num_tokens: '1.23',
     transfer_type: ETransferType.STANDARD,
     transfer_metadata: '',

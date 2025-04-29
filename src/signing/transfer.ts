@@ -1,6 +1,6 @@
-import { GrvtEnvironment } from '../types/config';
+import { GrvtEnvironment } from '../config/config';
 import { getEIP712DomainData } from './domain';
-import { GenerateDefaultSignature } from '../types';
+import { GenerateDefaultSignature } from './signature';
 import { Signer } from './signer';
 import { Transfer } from './types';
 import { Wallet } from 'ethers';

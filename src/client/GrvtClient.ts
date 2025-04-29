@@ -1,5 +1,5 @@
 import { signTransfer } from '../signing/transfer';
-import { GrvtConfig } from '../types/config';
+import { GrvtConfig } from '../config/config';
 import { GrvtBaseClient } from './GrvtBaseClient';
 import { AxiosRequestConfig, AxiosHeaders } from 'axios';
 import { TDG, MDG } from 'grvt';

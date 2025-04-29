@@ -1,4 +1,4 @@
-import { CHAIN_IDS, GrvtEnvironment } from '../types/config';
+import { CHAIN_IDS, GrvtEnvironment } from '../config/config';
 import { EIP712DomainData } from './types';
 
 export const getEIP712DomainData = (env: GrvtEnvironment): EIP712DomainData => {
