@@ -12,7 +12,7 @@ import {
   IApiSubAccountSummaryRequest,
   IApiTransferRequest,
 } from 'grvt';
-import { IApiRequestNativeDepositApprovalRequest, IApiRequestNativeDepositApprovalResponse } from '../types/deposit';
+import { IApiDepositApprovalRequest, IDepositApprovalResponse } from '../types/deposit';
 import { ITransferMetadata } from '../types/transfer';
 import { signWithdrawal } from '../signing/withdraw';
 
@@ -106,7 +106,7 @@ export class GrvtClient extends GrvtBaseClient {
     return this.tdgClient.transferHistory(request, config);
   }
 
-  async RequestNativeDepositApproval(request: IApiRequestNativeDepositApprovalRequest): Promise<IApiRequestNativeDepositApprovalResponse> {
+  private async requestDepositApproval(request: IApiDepositApprovalRequest): Promise<IDepositApprovalResponse> {
     return this.authenticatedPost(this.edgeBaseUrl + '/api/v1/deposit-approval', request);
   }
 

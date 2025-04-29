@@ -1,11 +1,11 @@
-export interface IApiRequestNativeDepositApprovalRequest {
+export interface IApiDepositApprovalRequest {
   l1Sender: string;
   l2Receiver: string;
   l1Token: string;
   amount: string
 }
 
-export interface RequestNativeRepositSignature {
+export interface IDepositSignature {
   l1Sender: string;
   l2Receiver: string;
   l1Token: string;
@@ -16,6 +16,9 @@ export interface RequestNativeRepositSignature {
   s: string;
 }
 
-export interface IApiRequestNativeDepositApprovalResponse {
-  signature: RequestNativeRepositSignature;
+export interface IDepositApprovalResponse {
+  signature: IDepositSignature;
+}
+
+export interface IDepositRequest {
 }
