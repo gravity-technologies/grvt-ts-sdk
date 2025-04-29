@@ -2,7 +2,7 @@ import { signTransfer } from '../signing/transfer';
 import { GrvtConfig } from '../config/config';
 import { GrvtBaseClient } from './GrvtBaseClient';
 import { AxiosRequestConfig, AxiosHeaders } from 'axios';
-import { TDG, MDG } from 'grvt';
+import { TDG, MDG, IApiWithdrawalRequest } from 'grvt';
 import { Wallet } from 'ethers';
 import {
   IApiSubAccountSummaryResponse,
@@ -14,6 +14,7 @@ import {
 } from 'grvt';
 import { IApiRequestNativeDepositApprovalRequest, IApiRequestNativeDepositApprovalResponse } from '../types/deposit';
 import { ITransferMetadata } from '../types/transfer';
+import { signWithdrawal } from '../signing/withdraw';
 
 export class GrvtClient extends GrvtBaseClient {
   protected tdgClient: TDG;
@@ -58,20 +59,40 @@ export class GrvtClient extends GrvtBaseClient {
   }
 
   /**
+   * Withdraw funds from the account
+   * @param request - Withdrawal request
+   * @returns Promise with withdrawal response
+   */
+  async Withdrawal(request: IApiWithdrawalRequest): Promise<{ acknowledgement: boolean }> {
+    const config = await this.authenticatedEndpoint();
+    if (!request.signature) {
+      if (!this.wallet) {
+        throw new Error('signing requires API secret');
+      }
+      const withdrawalSignature = await signWithdrawal(request, this.wallet, this.config.env);
+      request.signature = withdrawalSignature;
+    }
+    return this.tdgClient.withdrawal(request, config);
+  }
+
+  /**
    * Transfer funds between accounts
    * @param request - Transfer request
    * @returns Promise with transfer response
    */
   async transfer(request: IApiTransferRequest, metadata?: ITransferMetadata): Promise<{ acknowledgement: boolean }> {
-    if (!this.wallet) {
-      throw new Error('API secret is required for transfer');
-    }
     if (metadata) {
       request.transfer_metadata = JSON.stringify(metadata);
     }
-    const signedTransfer = await signTransfer(request, this.wallet, this.config.env);
+    if (!request.signature) {
+      if (!this.wallet) {
+        throw new Error('signing requires API secret');
+      }
+      const transferSignature = await signTransfer(request, this.wallet, this.config.env);
+      request.signature = transferSignature;
+    }
     const config = await this.authenticatedEndpoint();
-    return this.tdgClient.transfer(signedTransfer, config);
+    return this.tdgClient.transfer(request, config);
   }
 
   /**
