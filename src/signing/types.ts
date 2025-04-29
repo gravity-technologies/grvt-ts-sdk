@@ -11,12 +11,6 @@ export const EIP712Domain = [
   { name: 'chainId', type: 'uint256' },
 ];
 
-export const EIP712DomainWithoutContract = [
-  { name: 'name', type: 'string' },
-  { name: 'version', type: 'string' },
-  { name: 'chainId', type: 'uint256' },
-];
-
 export interface EIP712DomainData {
   name: string;
   version: string;
@@ -65,9 +59,6 @@ export const PrimaryType = keyMirror({
 
   // Trade
   Order: 0,
-
-  // ZKSyncMystreyBoxDefiTask
-  ZKSyncMysteryBoxDefiTask: 0,
 });
 
 // -------------- Account --------------
@@ -417,23 +408,6 @@ export const Order = {
       { name: 'contractSize', type: 'uint64' },
       { name: 'limitPrice', type: 'uint64' },
       { name: 'isBuyingContract', type: 'bool' },
-    ],
-  },
-};
-
-export const ZKSyncMysteryBoxDefiTask = {
-  primaryType: PrimaryType.ZKSyncMysteryBoxDefiTask,
-  domain: {
-    name: 'GRVT Mainnet',
-    version: '0',
-    chainId: 0,
-  },
-  types: {
-    EIP712Domain: EIP712DomainWithoutContract,
-    [PrimaryType.ZKSyncMysteryBoxDefiTask]: [
-      { name: 'signer', type: 'address' },
-      { name: 'message', type: 'string' },
-      { name: 'nonce', type: 'uint32' },
     ],
   },
 };

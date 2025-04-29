@@ -1,26 +1,28 @@
 import { GrvtEnvironment } from '../types/config';
 import { getEIP712DomainData } from './domain';
-import { ApiTransferRequest, Currency, GenerateDefaultSignature } from '../types';
+import { GenerateDefaultSignature } from '../types';
 import { Signer } from './signer';
 import { Transfer } from './types';
 import { Wallet } from 'ethers';
+import { ECurrency, IApiTransferRequest } from 'grvt';
 
 export const signTransfer = async (
-  transfer: ApiTransferRequest,
+  transfer: IApiTransferRequest,
   wallet: Wallet,
   env: GrvtEnvironment
-): Promise<ApiTransferRequest> => {
+): Promise<IApiTransferRequest> => {
   if (!transfer.signature) {
     transfer.signature = GenerateDefaultSignature();
   }
   const domain = getEIP712DomainData(env);
+
   const messageData = {
-    fromAccount: transfer.from_account_id,
-    fromSubAccount: transfer.from_sub_account_id,
-    toAccount: transfer.to_account_id,
-    toSubAccount: transfer.to_sub_account_id,
-    tokenCurrency: Object.keys(Currency).indexOf(transfer.currency) + 1,
-    numTokens: Math.floor(parseFloat(transfer.num_tokens) * 1e6),
+    fromAccount: transfer.from_account_id || '',
+    fromSubAccount: transfer.from_sub_account_id || '',
+    toAccount: transfer.to_account_id || '',
+    toSubAccount: transfer.to_sub_account_id || '',
+    tokenCurrency: transfer.currency ? Object.keys(ECurrency).indexOf(transfer.currency) + 1 : 0,
+    numTokens: transfer.num_tokens ? Math.floor(parseFloat(transfer.num_tokens) * 1e6) : 0,
     nonce: transfer.signature?.nonce ?? 0,
     expiration: transfer.signature?.expiration ?? '',
   };
