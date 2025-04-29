@@ -55,6 +55,21 @@ async function testTransfer(client: GrvtClient) {
   console.log('Transfer result:', JSON.stringify(transfer, null, 2));
 }
 
+async function testRequestNativeDepositApproval(client: GrvtClient) {
+  try {
+    const resp = await client.RequestNativeDepositApproval({
+      l1Sender: '0x3A61A3a89bFA69C595BE64E4Bc2DDB9303E8e3Af',
+      l2Receiver: '0x66c86ac8337fc841d4495fdb1b69a209b44b2ede',
+      l1Token: '0xeBFdeF5BA875426EA3686F901948bF5401F40A27',
+      amount: '123321'
+    });
+
+    console.log('Request Native Deposit Approval result:', JSON.stringify(resp, null, 2));
+  } catch (error) {
+    console.error('Error:', error);
+  }
+}
+
 async function main() {
   // Load environment variables
   const apiKey = {
@@ -79,6 +94,7 @@ async function main() {
   await testGetFundingAccountSummary(client);
   await testGetSubAccountSummary(client, tradingAccountId1);
   await testGetTransferHistory(client, fundingAccountID);
+  await testRequestNativeDepositApproval(client);
   await testTransfer(client);
 }
 

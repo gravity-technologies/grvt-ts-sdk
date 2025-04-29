@@ -51,6 +51,65 @@ export class GrvtBaseClient {
     return this.cookie;
   }
 
+  protected async authenticatedGet<RequestParams = Record<string, any>, ResponseData = any>(
+    endpoint: string,
+    params?: RequestParams
+  ): Promise<ResponseData> {
+    try {
+      await this.refreshCookie();
+      const url = new URL(endpoint);
+      if (params) {
+        Object.entries(params).forEach(([key, value]) => {
+          url.searchParams.append(key, String(value));
+        });
+      }
+
+      const response = await fetch(url.toString(), {
+        method: 'GET',
+        headers: this.getHeaders(),
+      });
+
+      const data = await response.json() as ResponseData;
+      return data;
+    } catch (error) {
+      throw new Error(error instanceof Error ? error.message : 'Unknown error');
+    }
+  }
+
+  protected async authenticatedPost<RequestData = Record<string, any>, ResponseData = any>(
+    endpoint: string,
+    payload: RequestData
+  ): Promise<ResponseData> {
+    try {
+      await this.refreshCookie();
+      const response = await fetch(endpoint, {
+        method: 'POST',
+        headers: this.getHeaders(),
+        body: JSON.stringify(payload)
+      });
+
+      const data = await response.json() as ResponseData;
+      return data;
+    } catch (error) {
+      throw new Error(error instanceof Error ? error.message : 'Unknown error');
+    }
+  }
+
+  private getHeaders(): Record<string, string> {
+    const headers: Record<string, string> = {
+      'Content-Type': 'application/json',
+    };
+
+    if (this.cookie) {
+      headers['Cookie'] = `gravity=${this.cookie.gravity}`;
+      if (this.cookie.XGrvtAccountId) {
+        headers['X-Grvt-Account-Id'] = this.cookie.XGrvtAccountId;
+      }
+    }
+
+    return headers;
+  }
+
   private getDomain(): string {
     switch (this.config.env) {
       case GrvtEnvironment.PRODUCTION:

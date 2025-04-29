@@ -12,6 +12,7 @@ import {
   IApiSubAccountSummaryRequest,
   IApiTransferRequest,
 } from 'grvt';
+import { IApiRequestNativeDepositApprovalRequest, IApiRequestNativeDepositApprovalResponse } from '../types/deposit';
 
 export class GrvtClient extends GrvtBaseClient {
   protected tdgClient: TDG;
@@ -79,6 +80,10 @@ export class GrvtClient extends GrvtBaseClient {
   ): Promise<IApiTransferHistoryResponse> {
     const config = await this.authenticatedEndpoint();
     return this.tdgClient.transferHistory(request, config);
+  }
+
+  async RequestNativeDepositApproval(request: IApiRequestNativeDepositApprovalRequest): Promise<IApiRequestNativeDepositApprovalResponse> {
+    return this.authenticatedPost(this.edgeBaseUrl + '/api/v1/deposit-approval', request);
   }
 
   private async authenticatedEndpoint(): Promise<AxiosRequestConfig> {
