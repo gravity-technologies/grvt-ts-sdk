@@ -13,6 +13,7 @@ import {
   IApiTransferRequest,
 } from 'grvt';
 import { IApiRequestNativeDepositApprovalRequest, IApiRequestNativeDepositApprovalResponse } from '../types/deposit';
+import { ITransferMetadata } from '../types/transfer';
 
 export class GrvtClient extends GrvtBaseClient {
   protected tdgClient: TDG;
@@ -61,11 +62,13 @@ export class GrvtClient extends GrvtBaseClient {
    * @param request - Transfer request
    * @returns Promise with transfer response
    */
-  async transfer(request: IApiTransferRequest): Promise<{ acknowledgement: boolean }> {
+  async transfer(request: IApiTransferRequest, metadata?: ITransferMetadata): Promise<{ acknowledgement: boolean }> {
     if (!this.wallet) {
       throw new Error('API secret is required for transfer');
     }
-
+    if (metadata) {
+      request.transfer_metadata = JSON.stringify(metadata);
+    }
     const signedTransfer = await signTransfer(request, this.wallet, this.config.env);
     const config = await this.authenticatedEndpoint();
     return this.tdgClient.transfer(signedTransfer, config);
