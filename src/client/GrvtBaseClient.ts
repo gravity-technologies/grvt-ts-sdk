@@ -1,4 +1,4 @@
-import { GrvtConfig, GrvtEnvironment } from '../types';
+import { GrvtConfig, GrvtEnvironment } from '../config/config';
 import { getCookieWithExpiration } from '../utils/cookie';
 
 interface GrvtCookie {

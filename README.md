@@ -4,7 +4,17 @@ This SDK provides a TypeScript interface to interact with the GRVT API. It suppo
 
 ## Installation
 
+The GRVT TypeScript SDK consists of two packages:
+- `grvt`: Core functionality and interfaces
+- `grvt-ts-sdk`: TypeScript implementation of the GRVT API
+
+Install both packages to get started:
+
 ```bash
+# Install core package
+npm install grvt
+
+# Install TypeScript SDK
 npm install grvt-ts-sdk
 ```
 
@@ -14,6 +24,7 @@ npm install grvt-ts-sdk
 
 ```typescript
 import { GrvtClient, GrvtEnvironment } from 'grvt-ts-sdk';
+import { ECurrency, ETransferType } from 'grvt';
 
 const client = new GrvtClient({
   apiKey: 'your-api-key',
@@ -31,14 +42,15 @@ const subAccountSummary = await client.getSubAccountSummary({
 
 // Transfer funds
 // Note: The signature field is optional. The SDK will automatically sign the transfer using the apiSecret.
+
 const transfer = await client.transfer({
   from_account_id: 'from-account-id',
   from_sub_account_id: 'from-sub-account-id',
   to_account_id: 'to-account-id',
   to_sub_account_id: 'to-sub-account-id',
-  currency: 'USDT',
+  currency: ECurrency.USDT,
   num_tokens: '100',
-  transfer_type: 'STANDARD',
+  transfer_type: ETransferType.STANDARD,
   transfer_metadata: ''
 });
 ```

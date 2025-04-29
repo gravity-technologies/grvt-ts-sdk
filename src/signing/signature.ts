@@ -1,3 +1,5 @@
+import { ISignature } from 'grvt';
+
 export interface Signature {
   signer: string;
   r: string;
@@ -7,7 +9,7 @@ export interface Signature {
   nonce: number;
 }
 
-export function GenerateDefaultSignature(expirationInHours: number = 24): Signature {
+export function GenerateDefaultSignature(expirationInHours: number = 24): ISignature {
   // Convert to nanoseconds
   const expirationTime = (Date.now() + expirationInHours * 60 * 60 * 1000) * 1e6;
 

@@ -1,4 +1,4 @@
-import { GrvtEnvironment } from '../types/config';
+import { GrvtEnvironment } from '../config/config';
 import { GrvtBaseClient } from './GrvtBaseClient';
 import { TMessageHandler } from 'grvt/ws';
 import { IWSTransferFeedDataV1 } from 'grvt';

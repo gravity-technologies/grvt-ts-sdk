@@ -1,4 +1,6 @@
-import { GrvtClient, GrvtEnvironment, Currency, TransferType } from '../src';
+import { ECurrency, ETransferType } from 'grvt';
+import { GrvtClient } from '../src';
+import { GrvtEnvironment } from '../src/config/config';
 
 const fundingAccountID = '';
 const tradingAccountId1 = '';
@@ -18,7 +20,7 @@ async function testGetSubAccountSummary(client: GrvtClient, tradingAccountId: st
   try {
     // Test getSubAccountSummary
     console.log(`Fetching sub account summary of trading account ${tradingAccountId}...`);
-    const subAccountSummary = await client.getSubAccountSummary({ sub_account_id: BigInt(tradingAccountId) });
+    const subAccountSummary = await client.getSubAccountSummary({ sub_account_id: tradingAccountId });
     console.log(`Sub Account Summary of trading account ${tradingAccountId}:`, subAccountSummary);
   } catch (error) {
     console.error('Error:', error);
@@ -44,9 +46,9 @@ async function testTransfer(client: GrvtClient) {
     from_sub_account_id: '0',
     to_account_id: recipientAccountId,
     to_sub_account_id: '0',
-    currency: Currency.USDT,
+    currency: ECurrency.USDT,
     num_tokens: '1.23',
-    transfer_type: TransferType.STANDARD,
+    transfer_type: ETransferType.STANDARD,
     transfer_metadata: '',
   });
 
