@@ -1,3 +1,4 @@
+export * from 'grvt';
 export * from './client/GrvtClient';
 export * from './client/GrvtWsClient';
 export * from './config/config';

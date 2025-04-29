@@ -1,18 +1,22 @@
 {
-  "name": "grvt-ts-sdk",
-  "version": "1.0.0",
+  "name": "@grvt/sdk",
+  "version": "0.0.1-beta.1",
   "description": "TypeScript SDK for GRVT",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
+  "engines": {
+    "node": ">=20"
+  },
   "scripts": {
+    "start": "tsc --watch",
+    "prebuild": "rimraf dist",
     "build": "tsc",
+    "postbuild": "cp package.json dist/ && cp README.md dist/ && cp LICENSE dist/",
+    "prerelease": "npm run build",
+    "release": "cd dist/ && npm publish --access public",
+    "link-local": "cp package.json dist/ && cd dist/ && npm link && cd ..",
     "lint": "eslint --config eslint.config.js .",
     "format": "prettier --write \"src/**/*.ts\"",
-    "prepare": "npm run build",
-    "prepublishOnly": "npm test && npm run lint",
-    "preversion": "npm run lint",
-    "version": "npm run format && git add -A src",
-    "postversion": "git push && git push --tags",
     "test:sdk": "ts-node -r dotenv/config tests/test.ts dotenv_config_path=./tests/.env",
     "test:ws": "ts-node -r dotenv/config tests/ws.test.ts dotenv_config_path=./tests/.env"
   },
@@ -34,6 +38,7 @@
     "eslint-config-prettier": "^10.1.2",
     "eslint-plugin-prettier": "^5.2.6",
     "prettier": "^3.5.3",
+    "rimraf": "^6.0.1",
     "ts-node": "^10.9.2",
     "typescript": "^5.8.3"
   },
@@ -44,5 +49,16 @@
     "grvt": "^1.4.0-beta.0",
     "set-cookie-parser": "^2.7.1",
     "ws": "^8.18.1"
-  }
+  },
+  "directories": {
+    "test": "tests"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/gravity-technologies/grvt-ts-sdk.git"
+  },
+  "bugs": {
+    "url": "https://github.com/gravity-technologies/grvt-ts-sdk/issues"
+  },
+  "homepage": "https://github.com/gravity-technologies/grvt-ts-sdk#readme"
 }
