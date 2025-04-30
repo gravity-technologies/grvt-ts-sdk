@@ -2,7 +2,7 @@ import { signTransfer } from '../signing/transfer';
 import { GrvtConfig } from '../config/config';
 import { GrvtBaseClient } from './GrvtBaseClient';
 import { AxiosRequestConfig, AxiosHeaders } from 'axios';
-import { TDG, MDG } from 'grvt';
+import { TDG, MDG, IApiWithdrawalRequest } from 'grvt';
 import { Wallet } from 'ethers';
 import {
   IApiSubAccountSummaryResponse,
@@ -12,6 +12,14 @@ import {
   IApiSubAccountSummaryRequest,
   IApiTransferRequest,
 } from 'grvt';
+import { ITransferMetadata } from '../types/transfer';
+import { signWithdrawal } from '../signing/withdraw';
+import { DepositService } from '../services/deposit';
+import {
+  IDepositOptions,
+  IApiDepositApprovalRequest,
+  IDepositApprovalResponse,
+} from '../types/deposit';
 
 export class GrvtClient extends GrvtBaseClient {
   protected tdgClient: TDG;
@@ -19,6 +27,7 @@ export class GrvtClient extends GrvtBaseClient {
   protected wallet?: Wallet;
   protected tradesBaseUrl: string;
   protected marketDataBaseUrl: string;
+  private depositService: DepositService;
 
   constructor(config: GrvtConfig) {
     super(config);
@@ -33,6 +42,7 @@ export class GrvtClient extends GrvtBaseClient {
     if (config.apiSecret) {
       this.wallet = new Wallet(config.apiSecret);
     }
+    this.depositService = new DepositService(this, config.env);
   }
 
   /**
@@ -56,18 +66,43 @@ export class GrvtClient extends GrvtBaseClient {
   }
 
   /**
+   * Withdraw funds from the account
+   * @param request - Withdrawal request
+   * @returns Promise with withdrawal response
+   */
+  async withdrawal(request: IApiWithdrawalRequest): Promise<{ acknowledgement: boolean }> {
+    const config = await this.authenticatedEndpoint();
+    if (!request.signature) {
+      if (!this.wallet) {
+        throw new Error('signing requires API secret');
+      }
+      const withdrawalSignature = await signWithdrawal(request, this.wallet, this.config.env);
+      request.signature = withdrawalSignature;
+    }
+    return this.tdgClient.withdrawal(request, config);
+  }
+
+  /**
    * Transfer funds between accounts
    * @param request - Transfer request
    * @returns Promise with transfer response
    */
-  async transfer(request: IApiTransferRequest): Promise<{ acknowledgement: boolean }> {
-    if (!this.wallet) {
-      throw new Error('API secret is required for transfer');
+  async transfer(
+    request: IApiTransferRequest,
+    metadata?: ITransferMetadata
+  ): Promise<{ acknowledgement: boolean }> {
+    if (metadata) {
+      request.transfer_metadata = JSON.stringify(metadata);
     }
-
-    const signedTransfer = await signTransfer(request, this.wallet, this.config.env);
+    if (!request.signature) {
+      if (!this.wallet) {
+        throw new Error('signing requires API secret');
+      }
+      const transferSignature = await signTransfer(request, this.wallet, this.config.env);
+      request.signature = transferSignature;
+    }
     const config = await this.authenticatedEndpoint();
-    return this.tdgClient.transfer(signedTransfer, config);
+    return this.tdgClient.transfer(request, config);
   }
 
   /**
@@ -79,6 +114,29 @@ export class GrvtClient extends GrvtBaseClient {
   ): Promise<IApiTransferHistoryResponse> {
     const config = await this.authenticatedEndpoint();
     return this.tdgClient.transferHistory(request, config);
+  }
+
+  /**
+   * Deposit funds to the account using L1 bridge or direct transfer for Arbitrum
+   * @param options - Deposit options
+   * @returns Promise with deposit transaction hash
+   */
+  async deposit(options: IDepositOptions): Promise<string> {
+    return this.depositService.deposit(options);
+  }
+
+  /**
+   * Request deposit approval
+   * @param request - Deposit approval request
+   * @returns Promise with deposit approval response
+   */
+  async requestDepositApproval(
+    request: IApiDepositApprovalRequest
+  ): Promise<IDepositApprovalResponse> {
+    return this.authenticatedPost<IApiDepositApprovalRequest, IDepositApprovalResponse>(
+      `${this.edgeBaseUrl}/v1/deposit/approval`,
+      request
+    );
   }
 
   private async authenticatedEndpoint(): Promise<AxiosRequestConfig> {

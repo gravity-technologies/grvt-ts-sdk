@@ -2,12 +2,12 @@ import { GrvtEnvironment } from '../config/config';
 import { getEIP712DomainData } from './domain';
 import { GenerateNonce, GenerateExpiration } from './utils';
 import { Signer } from './signer';
-import { Transfer } from './types';
+import { Withdrawal } from './types';
 import { Wallet } from 'ethers';
-import { ECurrency, IApiTransferRequest, ISignature } from 'grvt';
+import { ECurrency, IApiWithdrawalRequest, ISignature } from 'grvt';
 
-export const signTransfer = async (
-  transfer: IApiTransferRequest,
+export const signWithdrawal = async (
+  withdrawal: IApiWithdrawalRequest,
   wallet: Wallet,
   env: GrvtEnvironment,
   nonce?: number,
@@ -16,18 +16,19 @@ export const signTransfer = async (
   const signingNonce = nonce || GenerateNonce();
   const signingExpiration = GenerateExpiration(expirationInHours);
   const domain = getEIP712DomainData(env);
+
   const messageData = {
-    fromAccount: transfer.from_account_id || '',
-    fromSubAccount: transfer.from_sub_account_id || '',
-    toAccount: transfer.to_account_id || '',
-    toSubAccount: transfer.to_sub_account_id || '',
-    tokenCurrency: transfer.currency ? Object.keys(ECurrency).indexOf(transfer.currency) + 1 : 0,
-    numTokens: transfer.num_tokens ? Math.floor(parseFloat(transfer.num_tokens) * 1e6) : 0,
+    fromAccount: withdrawal.from_account_id || '',
+    toEthAddress: withdrawal.to_eth_address || '',
+    tokenCurrency: withdrawal.currency
+      ? Object.keys(ECurrency).indexOf(withdrawal.currency) + 1
+      : 0,
+    numTokens: withdrawal.num_tokens ? Math.floor(parseFloat(withdrawal.num_tokens) * 1e6) : 0,
     nonce: signingNonce,
     expiration: signingExpiration,
   };
   const signature = await Signer.sign(wallet.privateKey, {
-    ...Transfer,
+    ...Withdrawal,
     domain,
     message: messageData,
   });
