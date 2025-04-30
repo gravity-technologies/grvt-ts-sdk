@@ -1,6 +1,5 @@
-import { ECurrency, ETransferType } from 'grvt';
-import { GrvtClient } from '../src';
-import { GrvtEnvironment } from '../src/config/config';
+import { ECurrency, ETransferType } from '@grvt/client';
+import { GrvtClient, GrvtEnvironment } from '../src';
 
 const fundingAccountID = '';
 const tradingAccountId1 = '';

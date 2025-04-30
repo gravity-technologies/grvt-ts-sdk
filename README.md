@@ -19,9 +19,9 @@ npm install @grvt/sdk
 ### REST API Client
 
 ```typescript
-import { GrvtClient, GrvtEnvironment } from '@grvt/sdk';
-import { ECurrency, ETransferType } from '@grvt/sdk';
+import { ECurrency, ETransferType, ITransferMetadata, ETransferProvider, ETransferDirection } from '@grvt/client';
 
+// Initialize the client
 const client = new GrvtClient({
   apiKey: 'your-api-key',
   apiSecret: 'your-api-secret',
@@ -36,10 +36,11 @@ const subAccountSummary = await client.getSubAccountSummary({
   sub_account_id: 'your-sub-account-id',
 });
 
-// Transfer funds
-// Note: The signature field is optional. The SDK will automatically sign the transfer using the apiSecret.
+// Transfer examples
+// Note: The signature field is optional. If not provided, the SDK will automatically compute it using the apiSecret.
 
-const transfer = await client.transfer({
+// Standard transfer
+const transfer1 = await client.transfer({
   from_account_id: 'from-account-id',
   from_sub_account_id: 'from-sub-account-id',
   to_account_id: 'to-account-id',
@@ -47,8 +48,62 @@ const transfer = await client.transfer({
   currency: ECurrency.USDT,
   num_tokens: '100',
   transfer_type: ETransferType.STANDARD,
-  transfer_metadata: ''
 });
+
+
+// Transfer for deposit/withdrawal workflow. You can pass the metadata as the second argument
+// Note: The signature field is optional. If not provided, the SDK will automatically compute it using the apiSecret.
+const metadata: ITransferMetadata = {
+  provider: ETransferProvider.rhino;
+  direction: ETransferDirection.DEPOSIT; // Use ETransferDirection.WITHDRAWAL for withdraw flow
+  chainid,
+  endpoint,
+  provider_tx_id: tx_hash,
+  provider_ref_id: commit_id,
+};
+
+const transfer2 = await client.transfer(
+  {
+    from_account_id: 'from-account-id',
+    to_account_id: 'to-account-id',
+    currency: ECurrency.USDT,
+    num_tokens: '100',
+    transfer_type: ETransferType.NON_NATIVE_BRIDGE_DEPOSIT, // Use NON_NATIVE_BRIDGE_WITHDRAW for withdraw flow
+  },
+  metadata
+);
+
+// Request deposit approval
+// This API is used to get signature for a deposit before executing it
+const depositApproval = await client.requestDepositApproval({
+  l1Sender: 'your-l1-address', // L1 address of the sending wallet
+  l2Receiver: 'your-l2-address', // Your L2 address to receive the funds
+  l1Token: 'token-contract-address', // L1 token contract address
+  amount: '100' // Amount to deposit
+});
+
+
+// Withdraw funds from your account
+// Note: For withdrawals, the signature is automatically computed by the SDK using the apiSecret.
+const withdrawResult = await client.withdrawal({
+  from_account_id: 'your-account-id',
+  to_eth_address: 'destination-eth-address',
+  currency: ECurrency.USDT,
+  num_tokens: '100'
+});
+
+// Query transfer history
+const transferHistory = await client.getTransferHistory({
+  main_account_id: 'your-account-id', // optional, filter by main account
+  currency: [ECurrency.USDT, ECurrency.ETH], // optional, filter by currencies
+  start_time: '2024-01-01T00:00:00Z', // optional, filter by start time
+  end_time: '2024-03-14T23:59:59Z', // optional, filter by end time
+  limit: 100, // optional, number of records to return
+  cursor: 'next-page-cursor', // optional, pagination cursor
+  tx_id: 'specific-transaction-id' // optional, filter by specific transaction
+});
+
+
 ```
 
 ### WebSocket Client
@@ -58,6 +113,7 @@ The WebSocket client supports real-time data streaming and follows the same auth
 ```typescript
 import { GrvtWsClient, GrvtEnvironment } from '@grvt/sdk';
 
+// Initialize the WebSocket client
 const client = new GrvtWsClient({
   apiKey: 'your-api-key',
   env: GrvtEnvironment.DEV,
@@ -139,4 +195,4 @@ npm run format
 
 ## License
 
-This project is licensed under the Apache License 2.0 - see the [LICENSE](LICENSE) file for details. 
+This project is licensed under the Apache License 2.0 - see the [LICENSE](LICENSE) file for details.
