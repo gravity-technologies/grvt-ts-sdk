@@ -2,7 +2,7 @@ import { signTransfer } from '../signing/transfer';
 import { GrvtConfig } from '../config/config';
 import { GrvtBaseClient } from './GrvtBaseClient';
 import { AxiosRequestConfig, AxiosHeaders } from 'axios';
-import { TDG, MDG, IApiWithdrawalRequest } from 'grvt';
+import { TDG, MDG, IApiWithdrawalRequest } from '@grvt/client';
 import { Wallet } from 'ethers';
 import {
   IApiSubAccountSummaryResponse,
@@ -11,7 +11,7 @@ import {
   IApiTransferHistoryResponse,
   IApiSubAccountSummaryRequest,
   IApiTransferRequest,
-} from 'grvt';
+} from '@grvt/client';
 import { ITransferMetadata } from '../types/transfer';
 import { signWithdrawal } from '../signing/withdraw';
 import { DepositService } from '../services/deposit';

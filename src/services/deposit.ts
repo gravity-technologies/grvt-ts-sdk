@@ -8,7 +8,10 @@ import { EChain } from '../types/chain';
 import { GrvtEnvironment } from '../config/config';
 
 export class DepositService {
-  constructor(private client: GrvtClient, private env: GrvtEnvironment) { }
+  constructor(
+    private client: GrvtClient,
+    private env: GrvtEnvironment
+  ) {}
 
   /**
    * Deposit funds to the account using L1 bridge or direct transfer for Arbitrum

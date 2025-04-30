@@ -4,7 +4,7 @@ import { GenerateNonce, GenerateExpiration } from './utils';
 import { Signer } from './signer';
 import { Transfer } from './types';
 import { Wallet } from 'ethers';
-import { ECurrency, IApiTransferRequest, ISignature } from 'grvt';
+import { ECurrency, IApiTransferRequest, ISignature } from '@grvt/client';
 
 export const signTransfer = async (
   transfer: IApiTransferRequest,
