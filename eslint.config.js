@@ -40,7 +40,7 @@ module.exports = [
         'error',
         { argsIgnorePattern: '^_' },
       ],
-      'no-console': 'warn',
+      'no-console': 'off',
     },
   },
 ];

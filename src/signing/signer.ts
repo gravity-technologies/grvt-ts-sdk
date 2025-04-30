@@ -10,7 +10,7 @@ export class Signer {
     data: TContractTypesUnion & {
       message: any;
     }
-  ) {
+  ): string {
     return signTypedData({
       privateKey: Buffer.from(privateKey.replace(/^0x/, ''), 'hex'),
       data: data as any,
@@ -18,7 +18,11 @@ export class Signer {
     });
   }
 
-  static decode(signature: ReturnType<typeof Signer.sign>) {
+  static decode(signature: ReturnType<typeof Signer.sign>): {
+    r: string;
+    s: string;
+    v: number;
+  } {
     const bytes = [];
     for (let i = 0; i < signature.length; i += 2) {
       const parseByte = parseInt(signature.substr(i, 2), 16);
