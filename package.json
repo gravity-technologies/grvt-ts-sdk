@@ -15,8 +15,8 @@
     "prerelease": "npm run build",
     "release": "cd dist/ && npm publish --access public",
     "link-local": "cp package.json dist/ && cd dist/ && npm link && cd ..",
-    "lint": "eslint --config eslint.config.js .",
-    "format": "prettier --write \"src/**/*.ts\"",
+    "lint": "npx eslint --config eslint.config.js .",
+    "format": "npx prettier --write \"src/**/*.ts\"",
     "test:sdk": "ts-node -r dotenv/config tests/test.ts dotenv_config_path=./tests/.env",
     "test:ws": "ts-node -r dotenv/config tests/ws.test.ts dotenv_config_path=./tests/.env"
   },
