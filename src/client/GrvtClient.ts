@@ -1,5 +1,5 @@
 import { signTransfer } from '../signing/transfer';
-import { GrvtConfig } from '../config/config';
+import { IGrvtConfig } from '../config/config';
 import { GrvtBaseClient } from './GrvtBaseClient';
 import { AxiosRequestConfig, AxiosHeaders } from 'axios';
 import { TDG, MDG, IApiWithdrawalRequest } from '@grvt/client';
@@ -29,7 +29,7 @@ export class GrvtClient extends GrvtBaseClient {
   protected marketDataBaseUrl: string;
   private depositService: DepositService;
 
-  constructor(config: GrvtConfig) {
+  constructor(config: IGrvtConfig) {
     super(config);
     this.tradesBaseUrl = `https://trades.${this.domain}`;
     this.marketDataBaseUrl = `https://market-data.${this.domain}`;

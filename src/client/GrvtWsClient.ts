@@ -1,4 +1,4 @@
-import { GrvtEnvironment } from '../config/config';
+import { EGrvtEnvironment } from '../config/config';
 import { GrvtBaseClient } from './GrvtBaseClient';
 import { TMessageHandler } from '@grvt/client/ws';
 import { IWSTransferFeedDataV1 } from '@grvt/client';
@@ -16,7 +16,7 @@ export class GrvtWsClient extends GrvtBaseClient {
   private lastMessageTime: number = Date.now();
   private messageCheckInterval: NodeJS.Timeout | null = null;
 
-  constructor(config: { apiKey: string; env: GrvtEnvironment }) {
+  constructor(config: { apiKey: string; env: EGrvtEnvironment }) {
     super(config);
     this.url = this.getWebSocketUrl();
   }

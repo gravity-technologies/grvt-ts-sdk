@@ -1,5 +1,5 @@
 import { ECurrency, ETransferType } from '@grvt/client';
-import { GrvtClient, GrvtEnvironment } from '../src';
+import { GrvtClient, EGrvtEnvironment } from '../src';
 
 const fundingAccountID = '';
 const tradingAccountId1 = '';
@@ -60,7 +60,7 @@ async function main() {
     apiKey: process.env.API_KEY,
     apiSecret: process.env.API_SECRET
   };
-  const env = GrvtEnvironment.DEV;
+  const env = EGrvtEnvironment.DEV;
 
   if (!apiKey.apiKey || !apiKey.apiSecret) {
     console.error('Please set GRVT_API_KEY and GRVT_API_SECRET environment variables');
