@@ -1,5 +1,5 @@
 import { GrvtWsClient } from '../src/client/GrvtWsClient';
-import { GrvtEnvironment } from '../src/types/config';
+import { EGrvtEnvironment } from '../src/config/config';
 
 async function testTransferHistorySubscription() {
   const fundingAccountId = '';
@@ -7,7 +7,7 @@ async function testTransferHistorySubscription() {
 
   const client = new GrvtWsClient({
     apiKey: process.env.API_KEY || '',
-    env: GrvtEnvironment.DEV,
+    env: EGrvtEnvironment.DEV,
   });
 
   try {

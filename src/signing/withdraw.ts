@@ -1,4 +1,4 @@
-import { GrvtEnvironment } from '../config/config';
+import { EGrvtEnvironment } from '../config/config';
 import { getEIP712DomainData } from './domain';
 import { GenerateNonce, GenerateExpiration } from './utils';
 import { Signer } from './signer';
@@ -9,7 +9,7 @@ import { ECurrency, IApiWithdrawalRequest, ISignature } from '@grvt/client';
 export const signWithdrawal = async (
   withdrawal: IApiWithdrawalRequest,
   wallet: Wallet,
-  env: GrvtEnvironment,
+  env: EGrvtEnvironment,
   nonce?: number,
   expirationInHours?: number
 ): Promise<ISignature> => {

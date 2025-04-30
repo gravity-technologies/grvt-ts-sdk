@@ -1,20 +1,20 @@
-export enum GrvtEnvironment {
+export enum EGrvtEnvironment {
   PRODUCTION = 'PRODUCTION',
   TESTNET = 'TESTNET',
   STAGING = 'STAGING',
   DEV = 'DEV',
 }
 
-export interface GrvtConfig {
+export interface IGrvtConfig {
   apiKey?: string;
   apiSecret?: string;
   tradingAccountId?: string;
-  env: GrvtEnvironment;
+  env: EGrvtEnvironment;
 }
 
-export const CHAIN_IDS: Record<GrvtEnvironment, number> = {
-  [GrvtEnvironment.DEV]: 327,
-  [GrvtEnvironment.STAGING]: 327,
-  [GrvtEnvironment.TESTNET]: 326,
-  [GrvtEnvironment.PRODUCTION]: 325,
+export const CHAIN_IDS: Record<EGrvtEnvironment, number> = {
+  [EGrvtEnvironment.DEV]: 327,
+  [EGrvtEnvironment.STAGING]: 327,
+  [EGrvtEnvironment.TESTNET]: 326,
+  [EGrvtEnvironment.PRODUCTION]: 325,
 };

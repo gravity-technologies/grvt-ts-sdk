@@ -13,13 +13,13 @@ npm install @grvt/sdk
 ### REST API Client
 
 ```typescript
-import { ECurrency, ETransferType, ITransferMetadata, ETransferProvider, ETransferDirection } from '@grvt/client';
+import { ECurrency, ETransferType, ITransferMetadata, ETransferProvider, ETransferDirection, EGrvtEnvironment } from '@grvt/sdk';
 
 // Initialize the client
 const client = new GrvtClient({
   apiKey: 'your-api-key',
   apiSecret: 'your-api-secret',
-  env: GrvtEnvironment.DEV,
+  env: EGrvtEnvironment.DEV,
 });
 
 // Get funding account summary
@@ -48,7 +48,7 @@ const transfer1 = await client.transfer({
 // Transfer for deposit/withdrawal workflow. You can pass the metadata as the second argument
 // Note: The signature field is optional. If not provided, the SDK will automatically compute it using the apiSecret.
 const metadata: ITransferMetadata = {
-  provider: ETransferProvider.rhino;
+  provider: ETransferProvider.RHINO;
   direction: ETransferDirection.DEPOSIT; // Use ETransferDirection.WITHDRAWAL for withdraw flow
   chainid,
   endpoint,
@@ -100,12 +100,12 @@ const transferHistory = await client.getTransferHistory({
 The WebSocket client supports real-time data streaming and follows the same authentication mechanism as the REST API client.
 
 ```typescript
-import { GrvtWsClient, GrvtEnvironment } from '@grvt/sdk';
+import { GrvtWsClient, EGrvtEnvironment } from '@grvt/sdk';
 
 // Initialize the WebSocket client
 const client = new GrvtWsClient({
   apiKey: 'your-api-key',
-  env: GrvtEnvironment.DEV,
+  env: EGrvtEnvironment.DEV,
 });
 
 // Connect to WebSocket

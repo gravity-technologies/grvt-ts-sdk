@@ -1,4 +1,4 @@
-import { GrvtConfig, GrvtEnvironment } from '../config/config';
+import { IGrvtConfig, EGrvtEnvironment } from '../config/config';
 import { getCookieWithExpiration } from '../utils/cookie';
 
 interface GrvtCookie {
@@ -8,12 +8,12 @@ interface GrvtCookie {
 }
 
 export class GrvtBaseClient {
-  protected config: GrvtConfig;
+  protected config: IGrvtConfig;
   protected cookie: GrvtCookie | null = null;
   protected domain: string;
   protected edgeBaseUrl: string;
 
-  constructor(config: GrvtConfig) {
+  constructor(config: IGrvtConfig) {
     this.config = config;
     this.domain = this.getDomain();
     this.edgeBaseUrl = `https://edge.${this.domain}`;
@@ -112,13 +112,13 @@ export class GrvtBaseClient {
 
   private getDomain(): string {
     switch (this.config.env) {
-      case GrvtEnvironment.PRODUCTION:
+      case EGrvtEnvironment.PRODUCTION:
         return 'grvt.io';
-      case GrvtEnvironment.TESTNET:
+      case EGrvtEnvironment.TESTNET:
         return 'testnet.grvt.io';
-      case GrvtEnvironment.STAGING:
+      case EGrvtEnvironment.STAGING:
         return 'staging.gravitymarkets.io';
-      case GrvtEnvironment.DEV:
+      case EGrvtEnvironment.DEV:
         return 'dev.gravitymarkets.io';
       default:
         throw new Error(`Unknown environment: ${this.config.env}`);

@@ -5,12 +5,12 @@ import { IDepositOptions } from '../types/deposit';
 import { NumberUtils } from '../utils/number';
 import { GrvtClient } from '../client/GrvtClient';
 import { EChain } from '../types/chain';
-import { GrvtEnvironment } from '../config/config';
+import { EGrvtEnvironment } from '../config/config';
 
 export class DepositService {
   constructor(
     private client: GrvtClient,
-    private env: GrvtEnvironment
+    private env: EGrvtEnvironment
   ) {}
 
   /**
