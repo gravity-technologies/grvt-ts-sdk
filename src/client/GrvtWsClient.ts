@@ -1,7 +1,7 @@
 import { GrvtEnvironment } from '../config/config';
 import { GrvtBaseClient } from './GrvtBaseClient';
-import { TMessageHandler } from 'grvt/ws';
-import { IWSTransferFeedDataV1 } from 'grvt';
+import { TMessageHandler } from '@grvt/client/ws';
+import { IWSTransferFeedDataV1 } from '@grvt/client';
 import WebSocket from 'ws';
 
 export class GrvtWsClient extends GrvtBaseClient {
