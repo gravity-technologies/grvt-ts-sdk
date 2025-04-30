@@ -69,7 +69,7 @@ export class GrvtBaseClient {
         headers: this.getHeaders(),
       });
 
-      const data = await response.json() as ResponseData;
+      const data = (await response.json()) as ResponseData;
       return data;
     } catch (error) {
       throw new Error(error instanceof Error ? error.message : 'Unknown error');
@@ -85,10 +85,10 @@ export class GrvtBaseClient {
       const response = await fetch(endpoint, {
         method: 'POST',
         headers: this.getHeaders(),
-        body: JSON.stringify(payload)
+        body: JSON.stringify(payload),
       });
 
-      const data = await response.json() as ResponseData;
+      const data = (await response.json()) as ResponseData;
       return data;
     } catch (error) {
       throw new Error(error instanceof Error ? error.message : 'Unknown error');

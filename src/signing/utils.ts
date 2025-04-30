@@ -1,5 +1,3 @@
-import { ISignature } from 'grvt';
-
 /**
  * Generate a random nonce
  * @returns A random nonce

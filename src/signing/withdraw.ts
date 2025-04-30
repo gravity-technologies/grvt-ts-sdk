@@ -20,7 +20,9 @@ export const signWithdrawal = async (
   const messageData = {
     fromAccount: withdrawal.from_account_id || '',
     toEthAddress: withdrawal.to_eth_address || '',
-    tokenCurrency: withdrawal.currency ? Object.keys(ECurrency).indexOf(withdrawal.currency) + 1 : 0,
+    tokenCurrency: withdrawal.currency
+      ? Object.keys(ECurrency).indexOf(withdrawal.currency) + 1
+      : 0,
     numTokens: withdrawal.num_tokens ? Math.floor(parseFloat(withdrawal.num_tokens) * 1e6) : 0,
     nonce: signingNonce,
     expiration: signingExpiration,

@@ -1,8 +1,10 @@
+import { EChain } from './chain';
+
 export interface IApiDepositApprovalRequest {
   l1Sender: string;
   l2Receiver: string;
   l1Token: string;
-  amount: string
+  amount: string;
 }
 
 export interface IDepositSignature {
@@ -10,7 +12,7 @@ export interface IDepositSignature {
   l2Receiver: string;
   l1Token: string;
   amount: string;
-  deadline: number;
+  deadline: string;
   v: number;
   r: string;
   s: string;
@@ -20,5 +22,19 @@ export interface IDepositApprovalResponse {
   signature: IDepositSignature;
 }
 
-export interface IDepositRequest {
+export interface IDepositContractConfig {
+  l1TokenAddress: string;
+  l1BridgeAddress: string;
+  l1BridgeAbi: any[];
+  l1TokenAbi: any[];
+  chainId: number;
+  rpcUrl: string;
+}
+
+export interface IDepositOptions {
+  privateKey: string;
+  l1Sender: string;
+  l2Receiver: string;
+  amount: string;
+  chainId: EChain;
 }

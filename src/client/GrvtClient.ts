@@ -12,9 +12,14 @@ import {
   IApiSubAccountSummaryRequest,
   IApiTransferRequest,
 } from 'grvt';
-import { IApiDepositApprovalRequest, IDepositApprovalResponse } from '../types/deposit';
 import { ITransferMetadata } from '../types/transfer';
 import { signWithdrawal } from '../signing/withdraw';
+import { DepositService } from '../services/deposit';
+import {
+  IDepositOptions,
+  IApiDepositApprovalRequest,
+  IDepositApprovalResponse,
+} from '../types/deposit';
 
 export class GrvtClient extends GrvtBaseClient {
   protected tdgClient: TDG;
@@ -22,6 +27,7 @@ export class GrvtClient extends GrvtBaseClient {
   protected wallet?: Wallet;
   protected tradesBaseUrl: string;
   protected marketDataBaseUrl: string;
+  private depositService: DepositService;
 
   constructor(config: GrvtConfig) {
     super(config);
@@ -36,6 +42,7 @@ export class GrvtClient extends GrvtBaseClient {
     if (config.apiSecret) {
       this.wallet = new Wallet(config.apiSecret);
     }
+    this.depositService = new DepositService(this);
   }
 
   /**
@@ -63,7 +70,7 @@ export class GrvtClient extends GrvtBaseClient {
    * @param request - Withdrawal request
    * @returns Promise with withdrawal response
    */
-  async Withdrawal(request: IApiWithdrawalRequest): Promise<{ acknowledgement: boolean }> {
+  async withdrawal(request: IApiWithdrawalRequest): Promise<{ acknowledgement: boolean }> {
     const config = await this.authenticatedEndpoint();
     if (!request.signature) {
       if (!this.wallet) {
@@ -80,7 +87,10 @@ export class GrvtClient extends GrvtBaseClient {
    * @param request - Transfer request
    * @returns Promise with transfer response
    */
-  async transfer(request: IApiTransferRequest, metadata?: ITransferMetadata): Promise<{ acknowledgement: boolean }> {
+  async transfer(
+    request: IApiTransferRequest,
+    metadata?: ITransferMetadata
+  ): Promise<{ acknowledgement: boolean }> {
     if (metadata) {
       request.transfer_metadata = JSON.stringify(metadata);
     }
@@ -106,8 +116,27 @@ export class GrvtClient extends GrvtBaseClient {
     return this.tdgClient.transferHistory(request, config);
   }
 
-  private async requestDepositApproval(request: IApiDepositApprovalRequest): Promise<IDepositApprovalResponse> {
-    return this.authenticatedPost(this.edgeBaseUrl + '/api/v1/deposit-approval', request);
+  /**
+   * Deposit funds to the account using L1 bridge or direct transfer for Arbitrum
+   * @param options - Deposit options
+   * @returns Promise with deposit transaction hash
+   */
+  async deposit(options: IDepositOptions): Promise<string> {
+    return this.depositService.deposit(options);
+  }
+
+  /**
+   * Request deposit approval
+   * @param request - Deposit approval request
+   * @returns Promise with deposit approval response
+   */
+  async requestDepositApproval(
+    request: IApiDepositApprovalRequest
+  ): Promise<IDepositApprovalResponse> {
+    return this.authenticatedPost<IApiDepositApprovalRequest, IDepositApprovalResponse>(
+      `${this.edgeBaseUrl}/v1/deposit/approval`,
+      request
+    );
   }
 
   private async authenticatedEndpoint(): Promise<AxiosRequestConfig> {
