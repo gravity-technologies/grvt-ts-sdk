@@ -1,0 +1,59 @@
+name: Release & Publish
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - main
+    paths:
+      - .github/workflows/release-n-publish.yml
+      - src/**
+
+permissions:
+  id-token: write
+  contents: write
+  pull-requests: write
+
+jobs:
+  ReleaseAndPublish:
+    runs-on: ubuntu-latest
+    env:
+      node: ">=20"
+    steps:
+        - uses: actions/checkout@v4
+
+        - name: get-npm-version
+          id: tag-version
+          uses: martinbeentjes/npm-get-version-action@v1.3.1
+
+        - name: Push tag
+          uses: mathieudutour/github-tag-action@v6.1
+          with:
+            github_token: ${{ secrets.GITHUB_TOKEN }}
+            tag_prefix: v
+            custom_tag: ${{ steps.tag-version.outputs.current-version }}
+            fetch_all_tags: true
+
+        - name: Create Release
+          id: create-release
+          uses: actions/create-release@v1
+          env:
+            GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          with:
+            tag_name: v${{ steps.tag-version.outputs.current-version }}
+            release_name: Release v${{ steps.tag-version.outputs.current-version }}
+            body: Release v${{ steps.tag-version.outputs.current-version }}
+            draft: false
+            prerelease: false
+
+        - uses: actions/setup-node@v4
+          with:
+            node-version: ${{ env.node }}
+            registry-url: https://registry.npmjs.org
+            cache: npm
+            cache-dependency-path: package-lock.json
+
+        - run: npm ci
+        - run: npm config set //registry.npmjs.org/:_authToken ${{ secrets.NPM_PUBLISH_TOKEN }}
+        - run: npm whoami
+        - run: npm run release

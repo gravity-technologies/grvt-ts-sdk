@@ -1,0 +1,44 @@
+name: Check
+
+on:
+  workflow_dispatch:
+  # Run CI/CD jobs on pull request
+  pull_request:
+    paths:
+      # only run jobs when source files are changed
+      - src/**
+      # or when this workflow file is changed
+      - .github/workflows/check.yml
+      # Add all monorepo dependency folders
+
+jobs:
+  check:
+    concurrency:
+      group: ${{ github.workflow }}-${{ github.head_ref || github.ref_name }}
+      cancel-in-progress: true
+    runs-on: ubuntu-latest
+    env:
+      node: ">=20"
+    steps:
+      - name: Checkout Commit
+        uses: actions/checkout@v3
+
+      - name: Use Node.js ${{ env.node }}
+        uses: actions/setup-node@v3
+        with:
+          node-version: ${{ env.node }}
+          cache: "npm"
+          cache-dependency-path: package-lock.json
+
+      - name: Npm Install
+        run: npm ci
+
+      # Ensure the files are linted before they are pushed
+      - name: Npm Lint
+        run: |
+          npm run lint --fix
+          $GITHUB_WORKSPACE/.github/scripts/assert_no_files_changed.sh
+
+      # Ensure build not broken
+      - name: Npm run build
+        run: npm run build
