@@ -6,7 +6,7 @@ This SDK provides a TypeScript interface to interact with the GRVT API. It suppo
 
 The GRVT TypeScript SDK consists of two packages:
 - `grvt`: Core functionality and interfaces
-- `grvt-ts-sdk`: TypeScript implementation of the GRVT API
+- `@grvt/sdk`: TypeScript implementation of the GRVT API
 
 Install both packages to get started:
 
@@ -15,7 +15,7 @@ Install both packages to get started:
 npm install grvt
 
 # Install TypeScript SDK
-npm install grvt-ts-sdk
+npm install @grvt/sdk
 ```
 
 ## Usage
@@ -23,7 +23,7 @@ npm install grvt-ts-sdk
 ### REST API Client
 
 ```typescript
-import { GrvtClient, GrvtEnvironment } from 'grvt-ts-sdk';
+import { GrvtClient, GrvtEnvironment } from '@grvt/sdk';
 import { ECurrency, ETransferType, ITransferMetadata, ETransferProvider, ETransferDirection } from 'grvt';
 
 // Initialize the client
@@ -116,7 +116,7 @@ const transferHistory = await client.getTransferHistory({
 The WebSocket client supports real-time data streaming and follows the same authentication mechanism as the REST API client.
 
 ```typescript
-import { GrvtWsClient, GrvtEnvironment } from 'grvt-ts-sdk';
+import { GrvtWsClient, GrvtEnvironment } from '@grvt/sdk';
 
 // Initialize the WebSocket client
 const client = new GrvtWsClient({
