@@ -4,12 +4,6 @@ This SDK provides a TypeScript interface to interact with the GRVT API. It suppo
 
 ## Installation
 
-The GRVT TypeScript SDK consists of two packages:
-
-- `@grvt/sdk`: TypeScript implementation of the GRVT API
-
-Install both packages to get started:
-
 ```bash
 npm install @grvt/sdk
 ```
