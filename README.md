@@ -99,14 +99,9 @@ const withdrawResult = await client.withdrawal({
 
 // Query transfer history
 const transferHistory = await client.getTransferHistory({
-  main_account_id: 'your-account-id', // optional, filter by main account
-  currency: [ECurrency.USDT, ECurrency.ETH], // optional, filter by currencies
-  start_time: '2024-01-01T00:00:00Z', // optional, filter by start time
-  end_time: '2024-03-14T23:59:59Z', // optional, filter by end time
-  limit: 100, // optional, number of records to return
-  cursor: 'next-page-cursor', // optional, pagination cursor
-  tx_id: 'specific-transaction-id' // optional, filter by specific transaction
+  start_time: '1745600642000785050' // timestamp in nanosecond, use this to get all transfers with time >= start_time
 });
+// You can filter more & do pagination with this query if needed, please take a look at the request interface to get more details
 
 
 ```
