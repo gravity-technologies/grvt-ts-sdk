@@ -57,6 +57,7 @@ const transfer1 = await client.transfer({
 
 
 // Transfer for deposit/withdrawal workflow. You can pass the metadata as the second argument
+// Note: The signature field is optional. If not provided, the SDK will automatically compute it using the apiSecret.
 const metadata: ITransferMetadata = {
   provider: ETransferProvider.rhino;
   direction: ETransferDirection.DEPOSIT; // Use ETransferDirection.WITHDRAWAL for withdraw flow
@@ -77,17 +78,15 @@ const transfer2 = await client.transfer(
   metadata
 );
 
-// Note: The signature field is optional. If not provided, the SDK will automatically compute it using the apiSecret.
-
-// Deposit funds to your account
-// Note: The privateKey is the private key of the wallet you want to send funds from
-const depositResult = await client.deposit({
-  privateKey: 'your-sending-wallet-private-key', // Private key of the wallet sending the funds
+// Request deposit approval
+// This API is used to get signature for a deposit before executing it
+const depositApproval = await client.requestDepositApproval({
   l1Sender: 'your-l1-address', // L1 address of the sending wallet
   l2Receiver: 'your-l2-address', // Your L2 address to receive the funds
-  amount: '100',
-  chainId: EChain.ETHEREUM // or EChain.ARBITRUM
+  l1Token: 'token-contract-address', // L1 token contract address
+  amount: '100' // Amount to deposit
 });
+
 
 // Withdraw funds from your account
 // Note: For withdrawals, the signature is automatically computed by the SDK using the apiSecret.
