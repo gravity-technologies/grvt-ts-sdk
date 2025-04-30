@@ -13,7 +13,7 @@ npm install @grvt/sdk
 ### REST API Client
 
 ```typescript
-import { ECurrency, ETransferType, ITransferMetadata, ETransferProvider, ETransferDirection, EGrvtEnvironment } from '@grvt/sdk';
+import { ECurrency, ETransferType, ITransferMetadata, ETransferProvider, ETransferDirection, EGrvtEnvironment, EChain } from '@grvt/sdk';
 
 // Initialize the client
 const client = new GrvtClient({
@@ -50,7 +50,7 @@ const transfer1 = await client.transfer({
 const metadata: ITransferMetadata = {
   provider: ETransferProvider.RHINO;
   direction: ETransferDirection.DEPOSIT; // Use ETransferDirection.WITHDRAWAL for withdraw flow
-  chainid,
+  chainid: Echain.TRON,
   endpoint,
   provider_tx_id: tx_hash,
   provider_ref_id: commit_id,
@@ -97,7 +97,7 @@ const transferHistory = await client.getTransferHistory({
 
 ### WebSocket Client
 
-The WebSocket client supports real-time data streaming and follows the same authentication mechanism as the REST API client.
+The WebSocket client supports real-time data streaming and follows the same authentication mehanism as the REST API client.
 
 ```typescript
 import { GrvtWsClient, EGrvtEnvironment } from '@grvt/sdk';

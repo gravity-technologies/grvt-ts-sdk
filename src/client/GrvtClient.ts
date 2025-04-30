@@ -91,6 +91,13 @@ export class GrvtClient extends GrvtBaseClient {
     request: IApiTransferRequest,
     metadata?: ITransferMetadata
   ): Promise<{ acknowledgement: boolean }> {
+    // Make sure transfer metadata can only be set using the metadata parameter, not directly in the request
+    if (request.transfer_metadata) {
+      throw new Error(
+        'transfer_metadata must be set using the metadata parameter, not directly in the request'
+      );
+    }
+
     if (metadata) {
       request.transfer_metadata = JSON.stringify(metadata);
     }
