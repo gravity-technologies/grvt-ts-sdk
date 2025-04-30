@@ -1,4 +1,5 @@
 import { EChain } from '../types/chain';
+import { GrvtEnvironment } from '../config/config';
 
 export class ChainUtils {
   static isArbitrum(chainId?: number | EChain): boolean {
@@ -18,9 +19,17 @@ export class ChainUtils {
     return l1TokenAddresses[chainId];
   }
 
-  static getL1BridgeAddress(): string | undefined {
-    // Get bridge address from environment
-    return process.env.GRVT_BRIDGE_ADDRESS;
+  static getL1BridgeAddress(env: GrvtEnvironment): string {
+    switch (env) {
+      case GrvtEnvironment.DEV:
+        return '0xE256101E97e761Bd978f43F8bCd36Bb5ADEBEEDd';
+      case GrvtEnvironment.STAGING:
+        return '0xbb1AE91Bd3Fd782D64624300abFb353517956BF6';
+      case GrvtEnvironment.TESTNET:
+        return '0x6fdc38DB7a5850FEA2D62D879f99baa0546D1d09';
+      case GrvtEnvironment.PRODUCTION:
+        return '0xE17aeD2fC55f4A876315376ffA49FE6358113a65';
+    }
   }
 
   // TODO: verify and update this

@@ -42,7 +42,7 @@ export class GrvtClient extends GrvtBaseClient {
     if (config.apiSecret) {
       this.wallet = new Wallet(config.apiSecret);
     }
-    this.depositService = new DepositService(this);
+    this.depositService = new DepositService(this, config.env);
   }
 
   /**

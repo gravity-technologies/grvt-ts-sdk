@@ -5,9 +5,10 @@ import { IDepositOptions } from '../types/deposit';
 import { NumberUtils } from '../utils/number';
 import { GrvtClient } from '../client/GrvtClient';
 import { EChain } from '../types/chain';
+import { GrvtEnvironment } from '../config/config';
 
 export class DepositService {
-  constructor(private client: GrvtClient) {}
+  constructor(private client: GrvtClient, private env: GrvtEnvironment) { }
 
   /**
    * Deposit funds to the account using L1 bridge or direct transfer for Arbitrum
@@ -47,7 +48,7 @@ export class DepositService {
       return receipt.hash;
     } else {
       // For ETH: Bridge deposit
-      const l1BridgeAddress = ChainUtils.getL1BridgeAddress();
+      const l1BridgeAddress = ChainUtils.getL1BridgeAddress(this.env);
       if (!l1BridgeAddress) {
         throw new Error('Bridge address not configured');
       }
