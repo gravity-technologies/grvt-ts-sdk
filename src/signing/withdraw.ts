@@ -5,16 +5,16 @@ import { Signer } from './signer';
 import { Withdrawal } from './types';
 import { Wallet } from 'ethers';
 import { ECurrency, IApiWithdrawalRequest, ISignature } from '@grvt/client';
+import { ISigningOptions } from '../types/signature';
 
 export const signWithdrawal = async (
   withdrawal: IApiWithdrawalRequest,
   wallet: Wallet,
   env: EGrvtEnvironment,
-  nonce?: number,
-  expirationInHours?: number
+  options?: ISigningOptions
 ): Promise<ISignature> => {
-  const signingNonce = nonce || GenerateNonce();
-  const signingExpiration = GenerateExpiration(expirationInHours);
+  const nonce = options?.nonce || GenerateNonce();
+  const expiration = options?.expiration || GenerateExpiration();
   const domain = getEIP712DomainData(env);
 
   const messageData = {
@@ -24,8 +24,8 @@ export const signWithdrawal = async (
       ? Object.keys(ECurrency).indexOf(withdrawal.currency) + 1
       : 0,
     numTokens: withdrawal.num_tokens ? Math.floor(parseFloat(withdrawal.num_tokens) * 1e6) : 0,
-    nonce: signingNonce,
-    expiration: signingExpiration,
+    nonce: nonce,
+    expiration: expiration,
   };
   const signature = await Signer.sign(wallet.privateKey, {
     ...Withdrawal,
@@ -39,7 +39,7 @@ export const signWithdrawal = async (
     s: s,
     v: v,
     signer: wallet.address,
-    nonce: signingNonce,
-    expiration: signingExpiration,
+    nonce: nonce,
+    expiration: expiration,
   };
 };

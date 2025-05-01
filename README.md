@@ -13,7 +13,16 @@ npm install @grvt/sdk
 ### REST API Client
 
 ```typescript
-import { ECurrency, ETransferType, ITransferMetadata, ETransferProvider, ETransferDirection, EGrvtEnvironment, EChain } from '@grvt/sdk';
+import {
+  ECurrency,
+  ETransferType,
+  ITransferMetadata,
+  ETransferProvider,
+  ETransferDirection,
+  EGrvtEnvironment,
+  EChain,
+  ISigningOption
+} from '@grvt/sdk';
 
 // Initialize the client
 const client = new GrvtClient({
@@ -31,7 +40,7 @@ const subAccountSummary = await client.getSubAccountSummary({
 });
 
 // Transfer examples
-// Note: The signature field is optional. If not provided, the SDK will automatically compute it using the apiSecret.
+// Note: the signature field is optional. If not provided, the SDK will automatically compute it using the apiSecret and provided signing options
 
 // Standard transfer
 const transfer1 = await client.transfer({
@@ -45,8 +54,7 @@ const transfer1 = await client.transfer({
 });
 
 
-// Transfer for deposit/withdrawal workflow. You can pass the metadata as the second argument
-// Note: The signature field is optional. If not provided, the SDK will automatically compute it using the apiSecret.
+// Metadata for transfer, you can pass it as the second argument for the transfer API
 const metadata: ITransferMetadata = {
   provider: ETransferProvider.RHINO;
   direction: ETransferDirection.DEPOSIT; // Use ETransferDirection.WITHDRAWAL for withdraw flow
@@ -54,6 +62,12 @@ const metadata: ITransferMetadata = {
   endpoint,
   provider_tx_id: tx_hash,
   provider_ref_id: commit_id,
+};
+
+// Signing options for generating the signature as the third argument for the transfer API
+const signingOptions: ISigningOption = {
+  nonce: 12345,
+  expiration: '1746093221289693252'
 };
 
 const transfer2 = await client.transfer(
@@ -64,7 +78,8 @@ const transfer2 = await client.transfer(
     num_tokens: '100',
     transfer_type: ETransferType.NON_NATIVE_BRIDGE_DEPOSIT, // Use NON_NATIVE_BRIDGE_WITHDRAW for withdraw flow
   },
-  metadata
+  metadata,
+  signingOptions
 );
 
 // Request deposit approval
@@ -78,8 +93,8 @@ const depositApproval = await client.requestDepositApproval({
 
 
 // Withdraw funds from your account
-// Note: For withdrawals, the signature is automatically computed by the SDK using the apiSecret.
-const withdrawResult = await client.withdrawal({
+// Note: the signature field is optional. If not provided, the SDK will automatically compute it using the apiSecret and provided signing options
+const withdrawResult = await client.withdraw({
   from_account_id: 'your-account-id',
   to_eth_address: 'destination-eth-address',
   currency: ECurrency.USDT,

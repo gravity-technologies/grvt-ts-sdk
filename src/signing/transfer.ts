@@ -5,16 +5,16 @@ import { Signer } from './signer';
 import { Transfer } from './types';
 import { Wallet } from 'ethers';
 import { ECurrency, IApiTransferRequest, ISignature } from '@grvt/client';
+import { ISigningOptions } from '../types/signature';
 
 export const signTransfer = async (
   transfer: IApiTransferRequest,
   wallet: Wallet,
   env: EGrvtEnvironment,
-  nonce?: number,
-  expirationInHours?: number
+  options?: ISigningOptions
 ): Promise<ISignature> => {
-  const signingNonce = nonce || GenerateNonce();
-  const signingExpiration = GenerateExpiration(expirationInHours);
+  const nonce = options?.nonce || GenerateNonce();
+  const expiration = options?.expiration || GenerateExpiration();
   const domain = getEIP712DomainData(env);
   const messageData = {
     fromAccount: transfer.from_account_id || '',
@@ -23,8 +23,8 @@ export const signTransfer = async (
     toSubAccount: transfer.to_sub_account_id || '',
     tokenCurrency: transfer.currency ? Object.keys(ECurrency).indexOf(transfer.currency) + 1 : 0,
     numTokens: transfer.num_tokens ? Math.floor(parseFloat(transfer.num_tokens) * 1e6) : 0,
-    nonce: signingNonce,
-    expiration: signingExpiration,
+    nonce: nonce,
+    expiration: expiration,
   };
   const signature = await Signer.sign(wallet.privateKey, {
     ...Transfer,
@@ -38,7 +38,7 @@ export const signTransfer = async (
     s: s,
     v: v,
     signer: wallet.address,
-    nonce: signingNonce,
-    expiration: signingExpiration,
+    nonce: nonce,
+    expiration: expiration,
   };
 };
