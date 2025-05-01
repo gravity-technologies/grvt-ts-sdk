@@ -20,6 +20,7 @@ import {
   IApiDepositApprovalRequest,
   IDepositApprovalResponse,
 } from '../types/deposit';
+import { ISigningOptions } from '../types/signature';
 
 export class GrvtClient extends GrvtBaseClient {
   protected tdgClient: TDG;
@@ -68,15 +69,24 @@ export class GrvtClient extends GrvtBaseClient {
   /**
    * Withdraw funds from the account
    * @param request - Withdrawal request
+   * @param options - Signing options, if not provided, nonce will be generated randomly and expiration will be 24 hours from now
    * @returns Promise with withdrawal response
    */
-  async withdrawal(request: IApiWithdrawalRequest): Promise<{ acknowledgement: boolean }> {
+  async withdraw(
+    request: IApiWithdrawalRequest,
+    options?: ISigningOptions
+  ): Promise<{ acknowledgement: boolean }> {
     const config = await this.authenticatedEndpoint();
     if (!request.signature) {
       if (!this.wallet) {
         throw new Error('signing requires API secret');
       }
-      const withdrawalSignature = await signWithdrawal(request, this.wallet, this.config.env);
+      const withdrawalSignature = await signWithdrawal(
+        request,
+        this.wallet,
+        this.config.env,
+        options
+      );
       request.signature = withdrawalSignature;
     }
     return this.tdgClient.withdrawal(request, config);
@@ -85,11 +95,14 @@ export class GrvtClient extends GrvtBaseClient {
   /**
    * Transfer funds between accounts
    * @param request - Transfer request
+   * @param metadata - Transfer metadata
+   * @param options - Signing options, if not provided, nonce will be generated randomly and expiration will be 24 hours from now
    * @returns Promise with transfer response
    */
   async transfer(
     request: IApiTransferRequest,
-    metadata?: ITransferMetadata
+    metadata?: ITransferMetadata,
+    options?: ISigningOptions
   ): Promise<{ acknowledgement: boolean }> {
     // Make sure transfer metadata can only be set using the metadata parameter, not directly in the request
     if (request.transfer_metadata) {
@@ -105,7 +118,7 @@ export class GrvtClient extends GrvtBaseClient {
       if (!this.wallet) {
         throw new Error('signing requires API secret');
       }
-      const transferSignature = await signTransfer(request, this.wallet, this.config.env);
+      const transferSignature = await signTransfer(request, this.wallet, this.config.env, options);
       request.signature = transferSignature;
     }
     const config = await this.authenticatedEndpoint();

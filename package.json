@@ -1,6 +1,6 @@
 {
   "name": "@grvt/sdk",
-  "version": "0.0.1-beta.4",
+  "version": "0.0.1-beta.5",
   "description": "TypeScript SDK for GRVT",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
