@@ -2,7 +2,7 @@ import { signTransfer } from '../signing/transfer';
 import { IGrvtConfig } from '../config/config';
 import { GrvtBaseClient } from './GrvtBaseClient';
 import { AxiosRequestConfig, AxiosHeaders } from 'axios';
-import { TDG, MDG, IApiWithdrawalRequest } from '@grvt/client';
+import { TDG, MDG, IApiWithdrawalRequest, IApiTransferResponse } from '@grvt/client';
 import { Wallet } from 'ethers';
 import {
   IApiSubAccountSummaryResponse,
@@ -103,7 +103,7 @@ export class GrvtClient extends GrvtBaseClient {
     request: IApiTransferRequest,
     metadata?: ITransferMetadata,
     options?: ISigningOptions
-  ): Promise<{ acknowledgement: boolean }> {
+  ): Promise<IApiTransferResponse> {
     // Make sure transfer metadata can only be set using the metadata parameter, not directly in the request
     if (request.transfer_metadata) {
       throw new Error(
