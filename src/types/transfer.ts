@@ -16,4 +16,5 @@ export interface ITransferMetadata {
   endpoint: string;
   provider_tx_id?: string;
   provider_ref_id?: string;
+  [key: string]: any; // allows extra properties
 }
