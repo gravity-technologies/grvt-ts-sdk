@@ -13,7 +13,7 @@ export const signTransfer = async (
   env: EGrvtEnvironment,
   options?: ISigningOptions
 ): Promise<ISignature> => {
-  const nonce = options?.nonce || GenerateNonce();
+  const nonce = options?.nonce ?? GenerateNonce();
   const expiration = options?.expiration || GenerateExpiration();
   const domain = getEIP712DomainData(env);
   const messageData = {
