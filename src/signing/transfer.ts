@@ -6,6 +6,7 @@ import { Transfer } from './types';
 import { Wallet } from 'ethers';
 import { ECurrency, IApiTransferRequest, ISignature } from '@grvt/client';
 import { ISigningOptions } from '../types/signature';
+import { validateISigningOptions } from './validation';
 
 export const signTransfer = async (
   transfer: IApiTransferRequest,
@@ -13,6 +14,9 @@ export const signTransfer = async (
   env: EGrvtEnvironment,
   options?: ISigningOptions
 ): Promise<ISignature> => {
+  if (options) {
+    validateISigningOptions(options);
+  }
   const nonce = options?.nonce ?? GenerateNonce();
   const expiration = options?.expiration || GenerateExpiration();
   const domain = getEIP712DomainData(env);
