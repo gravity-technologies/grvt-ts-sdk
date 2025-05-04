@@ -65,6 +65,7 @@ const metadata: ITransferMetadata = {
 };
 
 // Signing options for generating the signature as the third argument for the transfer API
+// Note: nonce must be non-negative and expiration must be within 30 days
 const signingOptions: ISigningOption = {
   nonce: 12345,
   expiration: '1746093221289693252'
