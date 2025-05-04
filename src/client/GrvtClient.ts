@@ -21,6 +21,7 @@ import {
   IDepositApprovalResponse,
 } from '../types/deposit';
 import { ISigningOptions } from '../types/signature';
+import { validateISignature } from '../signing/validation';
 
 export class GrvtClient extends GrvtBaseClient {
   protected tdgClient: TDG;
@@ -88,6 +89,8 @@ export class GrvtClient extends GrvtBaseClient {
         options
       );
       request.signature = withdrawalSignature;
+    } else {
+      validateISignature(request.signature);
     }
     return this.tdgClient.withdrawal(request, config);
   }
@@ -120,6 +123,8 @@ export class GrvtClient extends GrvtBaseClient {
       }
       const transferSignature = await signTransfer(request, this.wallet, this.config.env, options);
       request.signature = transferSignature;
+    } else {
+      validateISignature(request.signature);
     }
     const config = await this.authenticatedEndpoint();
     return this.tdgClient.transfer(request, config);
