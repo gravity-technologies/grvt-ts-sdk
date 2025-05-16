@@ -66,6 +66,30 @@ export class GrvtBaseClient {
 
       const response = await fetch(url.toString(), {
         method: 'GET',
+        headers: this.getAuthenticatedHeaders(),
+      });
+
+      const data = (await response.json()) as ResponseData;
+      return data;
+    } catch (error) {
+      throw new Error(error instanceof Error ? error.message : 'Unknown error');
+    }
+  }
+
+  protected async get<RequestParams = Record<string, any>, ResponseData = any>(
+    endpoint: string,
+    params?: RequestParams
+  ): Promise<ResponseData> {
+    try {
+      const url = new URL(endpoint);
+      if (params) {
+        Object.entries(params).forEach(([key, value]) => {
+          url.searchParams.append(key, String(value));
+        });
+      }
+
+      const response = await fetch(url.toString(), {
+        method: 'GET',
         headers: this.getHeaders(),
       });
 
@@ -84,7 +108,7 @@ export class GrvtBaseClient {
       await this.refreshCookie();
       const response = await fetch(endpoint, {
         method: 'POST',
-        headers: this.getHeaders(),
+        headers: this.getAuthenticatedHeaders(),
         body: JSON.stringify(payload),
       });
 
@@ -96,6 +120,12 @@ export class GrvtBaseClient {
   }
 
   private getHeaders(): Record<string, string> {
+    return {
+      'Content-Type': 'application/json',
+    };
+  }
+
+  private getAuthenticatedHeaders(): Record<string, string> {
     const headers: Record<string, string> = {
       'Content-Type': 'application/json',
     };

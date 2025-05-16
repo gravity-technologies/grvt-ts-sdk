@@ -164,6 +164,15 @@ export class GrvtClient extends GrvtBaseClient {
     );
   }
 
+  /**
+   * Get current time
+   * @returns Promise with current time in milliseconds since epoch
+   */
+  async getCurrentTime(): Promise<number> {
+    const response = await this.get<any, { server_time: number }>(`${this.marketDataBaseUrl}/time`);
+    return response.server_time;
+  }
+
   private async authenticatedEndpoint(): Promise<AxiosRequestConfig> {
     await this.refreshCookie();
     return this.getAxiosConfig();

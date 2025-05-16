@@ -108,6 +108,10 @@ const transferHistory = await client.getTransferHistory({
 });
 // You can filter more & do pagination with this query if needed, please take a look at the request interface to get more details
 
+// Get current server time, in milliseconds since epoch
+const currentTime = await client.getCurrentTime()
+// Example result: 1747397398409
+
 
 ```
 
