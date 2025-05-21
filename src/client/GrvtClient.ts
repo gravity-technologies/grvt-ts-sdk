@@ -1,5 +1,5 @@
 import { signTransfer } from '../signing/transfer';
-import { IGrvtConfig } from '../config/config';
+import { EGrvtEnvironment, IGrvtConfig } from '../config/config';
 import { GrvtBaseClient } from './GrvtBaseClient';
 import { AxiosRequestConfig, AxiosHeaders } from 'axios';
 import { TDG, MDG, IApiWithdrawalRequest, IApiTransferResponse } from '@grvt/client';
@@ -12,6 +12,7 @@ import {
   IApiSubAccountSummaryRequest,
   IApiTransferRequest,
 } from '@grvt/client';
+import { EChain } from '../types/chain';
 import { ITransferMetadata } from '../types/transfer';
 import { signWithdrawal } from '../signing/withdraw';
 import { DepositService } from '../services/deposit';
@@ -171,6 +172,44 @@ export class GrvtClient extends GrvtBaseClient {
   async getCurrentTime(): Promise<number> {
     const response = await this.get<any, { server_time: number }>(`${this.marketDataBaseUrl}/time`);
     return response.server_time;
+  }
+
+  /**
+   * Get the Gravity chain ID for a given Rhino chain
+   * @param rhinoChain - The Rhino chain to get the Gravity chain ID for
+   * @returns The Gravity chain ID for the given Rhino chain and associated environment, or null if the chain ID is not found
+   * Asssociation between Rhino and Gravity environment:
+   * - DEV, STAGING - Rhino DEV
+   * - TESTNET - Rhino STG
+   * - PRODUCTIOn - Rhino PROD
+   */
+  async getGravityChainIDFromRhinoChain(rhinoChain: string): Promise<EChain | null> {
+    let rhinoEnv: string;
+    switch (this.config.env) {
+      case EGrvtEnvironment.PRODUCTION:
+        rhinoEnv = 'prod';
+        break;
+      case EGrvtEnvironment.TESTNET:
+        rhinoEnv = 'stg';
+        break;
+      case EGrvtEnvironment.STAGING:
+      case EGrvtEnvironment.DEV:
+        rhinoEnv = 'dev';
+        break;
+      default:
+        throw new Error('Invalid environment');
+    }
+    const response = await this.get<any, { chain_id: string }>(
+      `${this.edgeBaseUrl}/api/v1/bridge/rhino-chain-id`,
+      {
+        chain: rhinoChain,
+        env: rhinoEnv,
+      }
+    );
+    if (!response.chain_id) {
+      return null;
+    }
+    return response.chain_id as EChain;
   }
 
   private async authenticatedEndpoint(): Promise<AxiosRequestConfig> {

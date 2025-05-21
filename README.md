@@ -112,6 +112,18 @@ const transferHistory = await client.getTransferHistory({
 const currentTime = await client.getCurrentTime()
 // Example result: 1747397398409
 
+// Convert Rhino chain to Gravity Echain
+// Result will depend on the environment, specifically
+// - DEV, STAGING - Rhino DEV
+// - TESTNET - Rhino STG
+// - PRODUCTIOn - Rhino PROD
+// This will return null if the chain ID is not found or not supported
+import { SupportedChains } from "@rhino.fi/sdk"
+
+const chainID = await client.getGravityChainIDFromRhinoChain(SupportedChains.BNB_SMART_CHAIN)
+// Result:
+// - On DEV/STAGING/TESTNET: 97
+// - On PRODUCTION: 56
 
 ```
 
@@ -147,15 +159,18 @@ client.disconnect();
 #### WebSocket Features
 
 1. **Authentication**:
+
    - Uses the same cookie-based authentication as the REST API
    - Automatically refreshes cookies when needed
 
 2. **Connection Management**:
+
    - Automatic reconnection with exponential backoff
    - Connection monitoring with 5-second timeout
    - Reconnects if no messages are received within the timeout period
 
 3. **Subscription Handling**:
+
    - Unique subscription IDs for each subscription
    - Subscriptions are not automatically restored after reconnection
    - Users need to manually resubscribe after reconnection
