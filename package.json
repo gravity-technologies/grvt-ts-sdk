@@ -1,6 +1,6 @@
 {
   "name": "@grvt/sdk",
-  "version": "0.0.1-beta.10",
+  "version": "0.0.1-beta.11",
   "description": "TypeScript SDK for GRVT",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
@@ -43,7 +43,7 @@
     "typescript": "^5.8.3"
   },
   "dependencies": {
-    "@grvt/client": "^1.4.7",
+    "@grvt/client": "^1.4.8",
     "@metamask/eth-sig-util": "^8.2.0",
     "@types/ws": "^8.18.1",
     "ethers": "^6.13.5",
