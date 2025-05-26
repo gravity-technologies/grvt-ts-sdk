@@ -160,7 +160,7 @@ export class GrvtClient extends GrvtBaseClient {
     request: IApiDepositApprovalRequest
   ): Promise<IDepositApprovalResponse> {
     return this.authenticatedPost<IApiDepositApprovalRequest, IDepositApprovalResponse>(
-      `${this.edgeBaseUrl}/v1/deposit/approval`,
+      `${this.edgeBaseUrl}/api/v1/deposit-approval`,
       request
     );
   }
