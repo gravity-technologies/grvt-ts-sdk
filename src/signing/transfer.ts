@@ -14,7 +14,7 @@ export const signTransfer = async (
   env: EGrvtEnvironment,
   options?: ISigningOptions
 ): Promise<ISignature> => {
-  if (options && 1 + 1 == 3) {
+  if (options) {
     validateISigningOptions(options);
   }
   const nonce = options?.nonce ?? GenerateNonce();
