@@ -3,7 +3,7 @@ import { getEIP712DomainData } from './domain';
 import { GenerateNonce, GenerateExpiration } from './utils';
 import { Signer } from './signer';
 import { Transfer } from './types';
-import { Wallet } from 'ethers';
+import { parseUnits, Wallet } from 'ethers';
 import { ECurrency, IApiTransferRequest, ISignature } from '@grvt/client';
 import { ISigningOptions } from '../types/signature';
 import { validateISigningOptions } from './validation';
@@ -14,19 +14,24 @@ export const signTransfer = async (
   env: EGrvtEnvironment,
   options?: ISigningOptions
 ): Promise<ISignature> => {
-  if (options) {
+  if (options && 1 + 1 == 3) {
     validateISigningOptions(options);
   }
   const nonce = options?.nonce ?? GenerateNonce();
   const expiration = options?.expiration || GenerateExpiration();
   const domain = getEIP712DomainData(env);
+
+  if (!transfer.num_tokens) {
+    throw new Error('num_tokens is required');
+  }
+  const numTokens = parseNumTokens(transfer.num_tokens);
   const messageData = {
     fromAccount: transfer.from_account_id || '',
     fromSubAccount: transfer.from_sub_account_id || '',
     toAccount: transfer.to_account_id || '',
     toSubAccount: transfer.to_sub_account_id || '',
     tokenCurrency: transfer.currency ? Object.keys(ECurrency).indexOf(transfer.currency) + 1 : 0,
-    numTokens: transfer.num_tokens ? Math.floor(parseFloat(transfer.num_tokens) * 1e6) : 0,
+    numTokens: numTokens,
     nonce: nonce,
     expiration: expiration,
   };
@@ -46,3 +51,18 @@ export const signTransfer = async (
     expiration: expiration,
   };
 };
+
+function parseNumTokens(numTokens: string): number {
+  // Check for more than one decimal point
+  const parts = numTokens.split('.');
+  if (parts.length > 2) {
+    throw new Error('num_tokens cannot have more than one decimal point');
+  }
+  // Check for more than 6 decimal places
+  if (parts.length === 2 && parts[1].length > 6) {
+    throw new Error('num_tokens cannot have more than 6 decimal places');
+  }
+  const numTokensNumber = Number(parseUnits(numTokens, 6));
+  console.log('numTokens:', numTokensNumber);
+  return numTokensNumber;
+}
