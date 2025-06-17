@@ -63,6 +63,5 @@ function parseNumTokens(numTokens: string): number {
     throw new Error('num_tokens cannot have more than 6 decimal places');
   }
   const numTokensNumber = Number(parseUnits(numTokens, 6));
-  console.log('numTokens:', numTokensNumber);
   return numTokensNumber;
 }
