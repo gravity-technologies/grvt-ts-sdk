@@ -17,6 +17,9 @@
     "link-local": "cp package.json dist/ && cd dist/ && npm link && cd ..",
     "lint": "npx eslint --config eslint.config.js .",
     "format": "npx prettier --write \"src/**/*.ts\"",
+    "test": "jest",
+    "test:watch": "jest --watch",
+    "test:coverage": "jest --coverage",
     "test:sdk": "ts-node -r dotenv/config tests/test.ts dotenv_config_path=./tests/.env",
     "test:ws": "ts-node -r dotenv/config tests/ws.test.ts dotenv_config_path=./tests/.env"
   },
@@ -30,6 +33,7 @@
   "author": "",
   "license": "MIT",
   "devDependencies": {
+    "@types/jest": "^29.5.14",
     "@types/set-cookie-parser": "^2.4.10",
     "@typescript-eslint/eslint-plugin": "^8.31.0",
     "@typescript-eslint/parser": "^8.31.0",
@@ -37,8 +41,10 @@
     "eslint": "^9.25.1",
     "eslint-config-prettier": "^10.1.2",
     "eslint-plugin-prettier": "^5.2.6",
+    "jest": "^29.7.0",
     "prettier": "^3.5.3",
     "rimraf": "^6.0.1",
+    "ts-jest": "^29.4.0",
     "ts-node": "^10.9.2",
     "typescript": "^5.8.3"
   },
