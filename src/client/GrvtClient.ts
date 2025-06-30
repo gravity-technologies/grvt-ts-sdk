@@ -23,6 +23,7 @@ import {
 } from '../types/deposit';
 import { ISigningOptions } from '../types/signature';
 import { validateISignature } from '../signing/validation';
+import * as sanitizer from '../api/sanitizer';
 
 export class GrvtClient extends GrvtBaseClient {
   protected tdgClient: TDG;
@@ -139,7 +140,8 @@ export class GrvtClient extends GrvtBaseClient {
     request: IApiTransferHistoryRequest
   ): Promise<IApiTransferHistoryResponse> {
     const config = await this.authenticatedEndpoint();
-    return this.tdgClient.transferHistory(request, config);
+    const response = await this.tdgClient.transferHistory(request, config);
+    return sanitizer.sanitizeTransferHistoryResponse(response);
   }
 
   /**
