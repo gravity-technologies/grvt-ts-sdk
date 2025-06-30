@@ -11,6 +11,7 @@ import {
   IApiTransferHistoryResponse,
   IApiSubAccountSummaryRequest,
   IApiTransferRequest,
+  IAckResponse,
 } from '@grvt/client';
 import { EChain } from '../types/chain';
 import { ITransferMetadata } from '../types/transfer';
@@ -75,10 +76,7 @@ export class GrvtClient extends GrvtBaseClient {
    * @param options - Signing options, if not provided, nonce will be generated randomly and expiration will be 24 hours from now
    * @returns Promise with withdrawal response
    */
-  async withdraw(
-    request: IApiWithdrawalRequest,
-    options?: ISigningOptions
-  ): Promise<{ acknowledgement: boolean }> {
+  async withdraw(request: IApiWithdrawalRequest, options?: ISigningOptions): Promise<IAckResponse> {
     const config = await this.authenticatedEndpoint();
     if (!request.signature) {
       if (!this.wallet) {
