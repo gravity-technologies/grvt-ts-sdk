@@ -20,8 +20,8 @@
     "test": "jest",
     "test:watch": "jest --watch",
     "test:coverage": "jest --coverage",
-    "test:sdk": "ts-node -r dotenv/config tests/test.ts dotenv_config_path=./tests/.env",
-    "test:ws": "ts-node -r dotenv/config tests/ws.test.ts dotenv_config_path=./tests/.env"
+    "playground": "ts-node -r dotenv/config tests/playground.ts dotenv_config_path=./tests/.env",
+    "playground:ws": "ts-node -r dotenv/config tests/ws.playground.ts dotenv_config_path=./tests/.env"
   },
   "keywords": [
     "grvt",
