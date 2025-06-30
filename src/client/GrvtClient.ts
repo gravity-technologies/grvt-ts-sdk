@@ -11,6 +11,7 @@ import {
   IApiTransferHistoryResponse,
   IApiSubAccountSummaryRequest,
   IApiTransferRequest,
+  IAckResponse,
 } from '@grvt/client';
 import { EChain } from '../types/chain';
 import { ITransferMetadata } from '../types/transfer';
@@ -23,6 +24,7 @@ import {
 } from '../types/deposit';
 import { ISigningOptions } from '../types/signature';
 import { validateISignature } from '../signing/validation';
+import * as sanitizer from '../api/sanitizer';
 
 export class GrvtClient extends GrvtBaseClient {
   protected tdgClient: TDG;
@@ -74,10 +76,7 @@ export class GrvtClient extends GrvtBaseClient {
    * @param options - Signing options, if not provided, nonce will be generated randomly and expiration will be 24 hours from now
    * @returns Promise with withdrawal response
    */
-  async withdraw(
-    request: IApiWithdrawalRequest,
-    options?: ISigningOptions
-  ): Promise<{ acknowledgement: boolean }> {
+  async withdraw(request: IApiWithdrawalRequest, options?: ISigningOptions): Promise<IAckResponse> {
     const config = await this.authenticatedEndpoint();
     if (!request.signature) {
       if (!this.wallet) {
@@ -139,7 +138,8 @@ export class GrvtClient extends GrvtBaseClient {
     request: IApiTransferHistoryRequest
   ): Promise<IApiTransferHistoryResponse> {
     const config = await this.authenticatedEndpoint();
-    return this.tdgClient.transferHistory(request, config);
+    const response = await this.tdgClient.transferHistory(request, config);
+    return sanitizer.sanitizeTransferHistoryResponse(response);
   }
 
   /**
