@@ -2,7 +2,14 @@ import { signTransfer } from '../signing/transfer';
 import { EGrvtEnvironment, IGrvtConfig } from '../config/config';
 import { GrvtBaseClient } from './GrvtBaseClient';
 import { AxiosRequestConfig, AxiosHeaders } from 'axios';
-import { TDG, MDG, IApiWithdrawalRequest, IApiTransferResponse } from '@grvt/client';
+import {
+  TDG,
+  MDG,
+  IApiWithdrawalRequest,
+  IApiTransferResponse,
+  IApiDepositHistoryRequest,
+  IApiDepositHistoryResponse,
+} from '@grvt/client';
 import { Wallet } from 'ethers';
 import {
   IApiSubAccountSummaryResponse,
@@ -140,6 +147,16 @@ export class GrvtClient extends GrvtBaseClient {
     const config = await this.authenticatedEndpoint();
     const response = await this.tdgClient.transferHistory(request, config);
     return sanitizer.sanitizeTransferHistoryResponse(response);
+  }
+
+  /**
+   * Get deposit history
+   * @returns Promise with deposit history response
+   */
+  async getDepositHistory(request: IApiDepositHistoryRequest): Promise<IApiDepositHistoryResponse> {
+    const config = await this.authenticatedEndpoint();
+    const response = await this.tdgClient.depositHistory(request, config);
+    return sanitizer.sanitizeDepositHistoryResponse(response);
   }
 
   /**
