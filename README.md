@@ -104,9 +104,18 @@ const withdrawResult = await client.withdraw({
 
 // Query transfer history
 const transferHistory = await client.getTransferHistory({
-  start_time: '1745600642000785050' // timestamp in nanosecond, use this to get all transfers with event time >= start_time
+  start_time: '1745600642000785050' // timestamp in nanosecond, use this to filter transfers with event time >= start_time
+  end_time: '17588917787741000000' // timestamp in nanoseconds, use this to filter transfers with event time <= end_time
 });
 // You can filter more & do pagination with this query if needed, please take a look at the request interface to get more details
+
+// Query deposit history
+const depositHistory = await client.getDepositHistory({
+  start_time: '1745600642000785050' // timestamp in nanosecond, use this to filter deposits with event time >= start_time
+  end_time: '17588917787741000000' // timestamp in nanoseconds, use this to filter deposits with event time <= end_time
+});
+// You can filter more & do pagination with this query if needed, please take a look at the request interface to get more details
+
 
 // Get current server time, in milliseconds since epoch
 const currentTime = await client.getCurrentTime()
