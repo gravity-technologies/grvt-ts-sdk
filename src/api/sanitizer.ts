@@ -1,4 +1,8 @@
-import { IApiDepositHistoryResponse, IApiTransferHistoryResponse } from '@grvt/client';
+import {
+  IApiDepositHistoryResponse,
+  IApiTransferHistoryResponse,
+  IApiWithdrawalHistoryResponse,
+} from '@grvt/client';
 import { sanitizeEvmAddress } from '../utils/address';
 
 export function sanitizeTransferHistoryResponse(
@@ -23,6 +27,19 @@ export function sanitizeDepositHistoryResponse(
       ...deposit,
       from_address: sanitizeNullableAddress(deposit.from_address),
       to_account_id: sanitizeNullableAddress(deposit.to_account_id),
+    })),
+  };
+}
+
+export function sanitizeWithdrawalHistoryResponse(
+  response: IApiWithdrawalHistoryResponse
+): IApiWithdrawalHistoryResponse {
+  return {
+    ...response,
+    result: response.result?.map((withdrawal) => ({
+      ...withdrawal,
+      from_account_id: sanitizeNullableAddress(withdrawal.from_account_id),
+      to_eth_address: sanitizeNullableAddress(withdrawal.to_eth_address),
     })),
   };
 }

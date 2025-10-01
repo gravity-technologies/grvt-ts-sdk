@@ -9,6 +9,8 @@ import {
   IApiTransferResponse,
   IApiDepositHistoryRequest,
   IApiDepositHistoryResponse,
+  IApiWithdrawalHistoryRequest,
+  IApiWithdrawalHistoryResponse,
 } from '@grvt/client';
 import { Wallet } from 'ethers';
 import {
@@ -32,6 +34,7 @@ import {
 import { ISigningOptions } from '../types/signature';
 import { validateISignature } from '../signing/validation';
 import * as sanitizer from '../api/sanitizer';
+import { validateRequiredTimeRange } from '../api/validator';
 
 export class GrvtClient extends GrvtBaseClient {
   protected tdgClient: TDG;
@@ -144,6 +147,7 @@ export class GrvtClient extends GrvtBaseClient {
   async getTransferHistory(
     request: IApiTransferHistoryRequest
   ): Promise<IApiTransferHistoryResponse> {
+    validateRequiredTimeRange(request.start_time, request.end_time);
     const config = await this.authenticatedEndpoint();
     const response = await this.tdgClient.transferHistory(request, config);
     return sanitizer.sanitizeTransferHistoryResponse(response);
@@ -154,9 +158,23 @@ export class GrvtClient extends GrvtBaseClient {
    * @returns Promise with deposit history response
    */
   async getDepositHistory(request: IApiDepositHistoryRequest): Promise<IApiDepositHistoryResponse> {
+    validateRequiredTimeRange(request.start_time, request.end_time);
     const config = await this.authenticatedEndpoint();
     const response = await this.tdgClient.depositHistory(request, config);
     return sanitizer.sanitizeDepositHistoryResponse(response);
+  }
+
+  /**
+   * Get withdrawal history
+   * @returns Promise with withdrawal history response
+   */
+  async getWithdrawalHistory(
+    request: IApiWithdrawalHistoryRequest
+  ): Promise<IApiWithdrawalHistoryResponse> {
+    validateRequiredTimeRange(request.start_time, request.end_time);
+    const config = await this.authenticatedEndpoint();
+    const response = await this.tdgClient.withdrawalHistory(request, config);
+    return sanitizer.sanitizeWithdrawalHistoryResponse(response);
   }
 
   /**

@@ -103,16 +103,26 @@ const withdrawResult = await client.withdraw({
 });
 
 // Query transfer history
+// Note: both start_time and end_time are required for history queries
 const transferHistory = await client.getTransferHistory({
-  start_time: '1745600642000785050' // timestamp in nanosecond, use this to filter transfers with event time >= start_time
+  start_time: '1745600642000785050', // timestamp in nanosecond, use this to filter transfers with event time >= start_time
   end_time: '17588917787741000000' // timestamp in nanoseconds, use this to filter transfers with event time <= end_time
 });
 // You can filter more & do pagination with this query if needed, please take a look at the request interface to get more details
 
 // Query deposit history
+// Note: both start_time and end_time are required for history queries
 const depositHistory = await client.getDepositHistory({
-  start_time: '1745600642000785050' // timestamp in nanosecond, use this to filter deposits with event time >= start_time
+  start_time: '1745600642000785050', // timestamp in nanosecond, use this to filter deposits with event time >= start_time
   end_time: '17588917787741000000' // timestamp in nanoseconds, use this to filter deposits with event time <= end_time
+});
+// You can filter more & do pagination with this query if needed, please take a look at the request interface to get more details
+
+// Query withdrawal history
+// Note: both start_time and end_time are required for history queries
+const withdrawalHistory = await client.getWithdrawalHistory({
+  start_time: '1745600642000785050', // timestamp in nanosecond, use this to filter withdrawals with event time >= start_time
+  end_time: '17588917787741000000' // timestamp in nanoseconds, use this to filter withdrawals with event time <= end_time
 });
 // You can filter more & do pagination with this query if needed, please take a look at the request interface to get more details
 
