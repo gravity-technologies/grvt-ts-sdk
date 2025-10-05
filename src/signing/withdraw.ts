@@ -4,7 +4,8 @@ import { GenerateNonce, GenerateExpiration } from './utils';
 import { Signer } from './signer';
 import { Withdrawal } from './types';
 import { Wallet } from 'ethers';
-import { ECurrency, IApiWithdrawalRequest, ISignature } from '@grvt/client';
+import { IApiWithdrawalRequest, ISignature } from '@grvt/client/interfaces';
+import { ECurrency } from '../types/currency';
 import { ISigningOptions } from '../types/signature';
 import { validateISigningOptions } from './validation';
 

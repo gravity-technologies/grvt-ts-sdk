@@ -14,6 +14,7 @@ npm install @grvt/sdk
 
 ```typescript
 import {
+  GrvtClient,
   ECurrency,
   ETransferType,
   ITransferMetadata,
@@ -21,7 +22,7 @@ import {
   ETransferDirection,
   EGrvtEnvironment,
   EChain,
-  ISigningOption
+  ISigningOptions
 } from '@grvt/sdk';
 
 // Initialize the client
@@ -56,9 +57,9 @@ const transfer1 = await client.transfer({
 
 // Metadata for transfer, you can pass it as the second argument for the transfer API
 const metadata: ITransferMetadata = {
-  provider: ETransferProvider.RHINO;
-  direction: ETransferDirection.DEPOSIT; // Use ETransferDirection.WITHDRAWAL for withdraw flow
-  chainid: Echain.TRON,
+  provider: ETransferProvider.RHINO,
+  direction: ETransferDirection.DEPOSIT, // Use ETransferDirection.WITHDRAWAL for withdraw flow
+  chainid: EChain.TRON,
   endpoint,
   provider_tx_id: tx_hash,
   provider_ref_id: commit_id,
@@ -66,7 +67,7 @@ const metadata: ITransferMetadata = {
 
 // Signing options for generating the signature as the third argument for the transfer API
 // Note: nonce must be non-negative and expiration must be within 30 days
-const signingOptions: ISigningOption = {
+const signingOptions: ISigningOptions = {
   nonce: 12345,
   expiration: '1746093221289693252'
 };
@@ -135,11 +136,10 @@ const currentTime = await client.getCurrentTime()
 // Result will depend on the environment, specifically
 // - DEV, STAGING - Rhino DEV
 // - TESTNET - Rhino STG
-// - PRODUCTIOn - Rhino PROD
+// - PRODUCTION - Rhino PROD
 // This will return null if the chain ID is not found or not supported
-import { SupportedChains } from "@rhino.fi/sdk"
 
-const chainID = await client.getGravityChainIDFromRhinoChain(SupportedChains.BNB_SMART_CHAIN)
+const chainID = await client.getGravityChainIDFromRhinoChain('BNB_SMART_CHAIN')
 // Result:
 // - On DEV/STAGING/TESTNET: 97
 // - On PRODUCTION: 56
@@ -148,7 +148,7 @@ const chainID = await client.getGravityChainIDFromRhinoChain(SupportedChains.BNB
 
 ### WebSocket Client
 
-The WebSocket client supports real-time data streaming and follows the same authentication mehanism as the REST API client.
+The WebSocket client supports real-time data streaming and follows the same authentication mechanism as the REST API client.
 
 ```typescript
 import { GrvtWsClient, EGrvtEnvironment } from '@grvt/sdk';
@@ -226,7 +226,7 @@ npm run test:sdk
 npm run test:ws
 ```
 
-### Linting and Formating
+### Linting and Formatting
 
 ```bash
 npm run lint
