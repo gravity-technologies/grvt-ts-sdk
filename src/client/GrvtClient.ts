@@ -2,18 +2,14 @@ import { signTransfer } from '../signing/transfer';
 import { EGrvtEnvironment, IGrvtConfig } from '../config/config';
 import { GrvtBaseClient } from './GrvtBaseClient';
 import { AxiosRequestConfig, AxiosHeaders } from 'axios';
+import { TDG, MDG } from '@grvt/client';
 import {
-  TDG,
-  MDG,
   IApiWithdrawalRequest,
   IApiTransferResponse,
   IApiDepositHistoryRequest,
   IApiDepositHistoryResponse,
   IApiWithdrawalHistoryRequest,
   IApiWithdrawalHistoryResponse,
-} from '@grvt/client';
-import { Wallet } from 'ethers';
-import {
   IApiSubAccountSummaryResponse,
   IApiFundingAccountSummaryResponse,
   IApiTransferHistoryRequest,
@@ -21,7 +17,8 @@ import {
   IApiSubAccountSummaryRequest,
   IApiTransferRequest,
   IAckResponse,
-} from '@grvt/client';
+} from '@grvt/client/interfaces';
+import { Wallet } from 'ethers';
 import { EChain } from '../types/chain';
 import { ITransferMetadata } from '../types/transfer';
 import { signWithdrawal } from '../signing/withdraw';

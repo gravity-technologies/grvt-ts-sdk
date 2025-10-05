@@ -1,4 +1,5 @@
-import { ECurrency, ETransferType } from '@grvt/client';
+import { ECurrency } from '../src/types/currency';
+import { ETransferType } from '@grvt/client/interfaces/codegen/enums/transfer-type';
 import { GrvtClient, EGrvtEnvironment } from '../src';
 
 const fundingAccountID = '';

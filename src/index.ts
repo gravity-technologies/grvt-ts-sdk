@@ -1,4 +1,6 @@
 export * from '@grvt/client';
+export * from '@grvt/client/interfaces';
+export * from '@grvt/client/interfaces/codegen/enums/transfer-type';
 export * from './client/GrvtClient';
 export * from './client/GrvtWsClient';
 export * from './config/config';
@@ -10,6 +12,7 @@ export * from './types/chain';
 export * from './types/deposit';
 export * from './types/transfer';
 export * from './types/signature';
+export * from './types/currency';
 
 // Re-export the main client class as default
 import { GrvtClient } from './client/GrvtClient';

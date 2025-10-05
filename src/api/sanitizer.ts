@@ -2,7 +2,7 @@ import {
   IApiDepositHistoryResponse,
   IApiTransferHistoryResponse,
   IApiWithdrawalHistoryResponse,
-} from '@grvt/client';
+} from '@grvt/client/interfaces';
 import { sanitizeEvmAddress } from '../utils/address';
 
 export function sanitizeTransferHistoryResponse(

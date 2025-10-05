@@ -4,7 +4,8 @@ import { GenerateNonce, GenerateExpiration } from './utils';
 import { Signer } from './signer';
 import { Transfer } from './types';
 import { parseUnits, Wallet } from 'ethers';
-import { ECurrency, IApiTransferRequest, ISignature } from '@grvt/client';
+import { IApiTransferRequest, ISignature } from '@grvt/client/interfaces';
+import { ECurrency } from '../types/currency';
 import { ISigningOptions } from '../types/signature';
 import { validateISigningOptions } from './validation';
 

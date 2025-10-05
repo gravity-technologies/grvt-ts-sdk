@@ -1,4 +1,4 @@
-import { ISignature } from '@grvt/client';
+import { ISignature } from '@grvt/client/interfaces';
 import { ISigningOptions } from '../types/signature';
 
 export const validateISigningOptions = (options: ISigningOptions) => {
