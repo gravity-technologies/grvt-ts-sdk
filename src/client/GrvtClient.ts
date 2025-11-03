@@ -32,6 +32,11 @@ import { ISigningOptions } from '../types/signature';
 import { validateISignature } from '../signing/validation';
 import * as sanitizer from '../api/sanitizer';
 import { validateRequiredTimeRange } from '../api/validator';
+import {
+  IKYACheckRhinoSDADepositRequest,
+  IKYACheckRhinoSDADepositResponse,
+  EKYACheckStatus,
+} from '../types/kya';
 
 export class GrvtClient extends GrvtBaseClient {
   protected tdgClient: TDG;
@@ -213,7 +218,7 @@ export class GrvtClient extends GrvtBaseClient {
    * Asssociation between Rhino and Gravity environment:
    * - DEV, STAGING - Rhino DEV
    * - TESTNET - Rhino STG
-   * - PRODUCTIOn - Rhino PROD
+   * - PRODUCTION - Rhino PROD
    */
   async getGravityChainIDFromRhinoChain(rhinoChain: string): Promise<EChain | null> {
     let rhinoEnv: string;
@@ -242,6 +247,26 @@ export class GrvtClient extends GrvtBaseClient {
       return null;
     }
     return response.chain_id as EChain;
+  }
+
+  async kyaCheckRhinoSDADeposit(
+    senderAddress: string,
+    rhinoChain: string,
+    smartDepositAddress: string
+  ): Promise<EKYACheckStatus> {
+    const grvtChainId = await this.getGravityChainIDFromRhinoChain(rhinoChain);
+    if (!grvtChainId) {
+      throw new Error('Invalid Rhino chain');
+    }
+    const response = await this.authenticatedPost<
+      IKYACheckRhinoSDADepositRequest,
+      IKYACheckRhinoSDADepositResponse
+    >(`${this.edgeBaseUrl}/api/v1/kya`, {
+      sender_address: senderAddress,
+      chain_id: grvtChainId,
+      smart_deposit_address: smartDepositAddress,
+    });
+    return response.status;
   }
 
   private async authenticatedEndpoint(): Promise<AxiosRequestConfig> {

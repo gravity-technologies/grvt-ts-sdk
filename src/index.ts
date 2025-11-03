@@ -9,6 +9,7 @@ export * from './signing/utils';
 export * from './signing/withdraw';
 export * from './signing/types';
 export * from './types/chain';
+export * from './types/kya';
 export * from './types/deposit';
 export * from './types/transfer';
 export * from './types/signature';
