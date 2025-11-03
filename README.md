@@ -22,7 +22,8 @@ import {
   ETransferDirection,
   EGrvtEnvironment,
   EChain,
-  ISigningOptions
+  ISigningOptions,
+  EKYACheckStatus
 } from '@grvt/sdk';
 
 // Initialize the client
@@ -143,6 +144,15 @@ const chainID = await client.getGravityChainIDFromRhinoChain('BNB_SMART_CHAIN')
 // Result:
 // - On DEV/STAGING/TESTNET: 97
 // - On PRODUCTION: 56
+
+// Check KYA (Know Your Asset) status for Rhino SDA deposit
+// This API checks if a deposit through Rhino SDA deposit pass KYA check
+const kyaStatus = await client.kyaCheckRhinoSDADeposit(
+  'sender-address', // The sender's address
+  'BNB_SMART_CHAIN', // Rhino chain name
+  'smart-deposit-address' // Smart deposit address
+);
+// Returns EKYACheckStatus.CLEARED or EKYACheckStatus.DIRTY
 
 ```
 
