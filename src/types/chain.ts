@@ -9,6 +9,7 @@ export enum EChain {
   ZKSYNC_ERA = '324',
   SOLANA = 'solana',
   TRON = 'tron',
+  KAIA = '8217',
 
   // Testnet
   ARBITRUM_SEPOLIA = '421614',
@@ -20,4 +21,5 @@ export enum EChain {
   ZKSYNC_SEPOLIA = '300',
   SOLANA_TESTNET = 'solana_test',
   TRON_TESTNET = 'tron_test',
+  KAIA_TESTNET = '1001',
 }
