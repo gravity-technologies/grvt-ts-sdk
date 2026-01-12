@@ -20,3 +20,24 @@ export function sanitizeEvmAddress(address: string): string {
   address = address.toLowerCase();
   return address;
 }
+
+/**
+ * Sanitize a transaction hash to:
+ * - trim the transaction hash
+ * - lowercase the transaction hash
+ * - add 0 padding to the left if it's less than 64 characters
+ * - add 0x prefix if it doesn't have it
+ * @param transactionHash - The transaction hash to sanitize
+ * @returns The sanitized transaction hash
+ */
+export function sanitizeTransactionHash(transactionHash: string): string {
+  // 1. Trim the transaction hash
+  transactionHash = transactionHash.trim();
+  // 2. Remove the 0x prefix if it exists
+  transactionHash = transactionHash.replace(/^0x/, '');
+  // 3. Add 0 padding to the left if it's less than 64 characters
+  transactionHash = transactionHash.padStart(64, '0');
+  // 4. Add 0x prefix if it doesn't have it
+  transactionHash = `0x${transactionHash}`;
+  return transactionHash;
+}
