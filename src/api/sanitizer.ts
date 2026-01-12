@@ -3,7 +3,7 @@ import {
   IApiTransferHistoryResponse,
   IApiWithdrawalHistoryResponse,
 } from '@grvt/client/interfaces';
-import { sanitizeEvmAddress } from '../utils/address';
+import { sanitizeEvmAddress, sanitizeTransactionHash } from '../utils/address';
 
 export function sanitizeTransferHistoryResponse(
   response: IApiTransferHistoryResponse
@@ -27,6 +27,8 @@ export function sanitizeDepositHistoryResponse(
       ...deposit,
       from_address: sanitizeNullableAddress(deposit.from_address),
       to_account_id: sanitizeNullableAddress(deposit.to_account_id),
+      l_1_hash: sanitizeNullableTransactionHash(deposit.l_1_hash),
+      l_2_hash: sanitizeNullableTransactionHash(deposit.l_2_hash),
     })),
   };
 }
@@ -40,10 +42,16 @@ export function sanitizeWithdrawalHistoryResponse(
       ...withdrawal,
       from_account_id: sanitizeNullableAddress(withdrawal.from_account_id),
       to_eth_address: sanitizeNullableAddress(withdrawal.to_eth_address),
+      l_1_hash: sanitizeNullableTransactionHash(withdrawal.l_1_hash),
+      l_2_hash: sanitizeNullableTransactionHash(withdrawal.l_2_hash),
     })),
   };
 }
 
 function sanitizeNullableAddress(address: string | undefined): string | undefined {
   return address ? sanitizeEvmAddress(address) : undefined;
+}
+
+function sanitizeNullableTransactionHash(transactionHash: string | undefined): string | undefined {
+  return transactionHash ? sanitizeTransactionHash(transactionHash) : undefined;
 }
