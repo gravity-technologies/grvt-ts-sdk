@@ -18,27 +18,37 @@ jobs:
       cancel-in-progress: true
     runs-on: ubuntu-latest
     env:
-      node: ">=20"
+      node: "24.x"
+      pnpm: "10.33.0"
     steps:
       - name: Checkout Commit
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: ${{ env.pnpm }}
 
       - name: Use Node.js ${{ env.node }}
-        uses: actions/setup-node@v3
+        uses: actions/setup-node@v4
         with:
           node-version: ${{ env.node }}
-          cache: "npm"
-          cache-dependency-path: package-lock.json
+          cache: "pnpm"
+          cache-dependency-path: pnpm-lock.yaml
 
-      - name: Npm Install
-        run: npm ci
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
 
       # Ensure the files are linted before they are pushed
-      - name: Npm Lint
+      - name: Lint
         run: |
-          npm run lint --fix
+          pnpm run lint
           $GITHUB_WORKSPACE/.github/scripts/assert_no_files_changed.sh
 
+      # Run unit tests
+      - name: Test
+        run: pnpm run test
+
       # Ensure build not broken
-      - name: Npm run build
-        run: npm run build
+      - name: Build
+        run: pnpm run build
