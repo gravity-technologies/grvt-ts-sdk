@@ -10,6 +10,8 @@ export enum EChain {
   SOLANA = 'solana',
   TRON = 'tron',
   KAIA = '8217',
+  ROBINHOOD = '4663',
+  ARC = '5042',
 
   // Testnet
   ARBITRUM_SEPOLIA = '421614',
@@ -22,4 +24,6 @@ export enum EChain {
   SOLANA_TESTNET = 'solana_test',
   TRON_TESTNET = 'tron_test',
   KAIA_TESTNET = '1001',
+  ROBINHOOD_TESTNET = '46630',
+  ARC_TESTNET = '5042002',
 }
