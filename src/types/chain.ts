@@ -12,6 +12,7 @@ export enum EChain {
   KAIA = '8217',
   ROBINHOOD = '4663',
   ARC = '5042',
+  BITCOIN = 'bitcoin',
 
   // Testnet
   ARBITRUM_SEPOLIA = '421614',
@@ -26,4 +27,5 @@ export enum EChain {
   KAIA_TESTNET = '1001',
   ROBINHOOD_TESTNET = '46630',
   ARC_TESTNET = '5042002',
+  BITCOIN_TESTNET = 'bitcoin_test',
 }
