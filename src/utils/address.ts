@@ -11,12 +11,12 @@ export function sanitizeEvmAddress(address: string): string {
   // 1. Trim the address
   address = address.trim();
   // 2. Remove the 0x prefix if it exists
-  address = address.replace(/^0x/, '');
+  address = address.replace(/^0x/i, '');
   // 3. Add 0 padding to the left if it's less than 40 characters
   address = address.padStart(40, '0');
-  // 3. Add 0x prefix if it doesn't have it
+  // 4. Add 0x prefix if it doesn't have it
   address = `0x${address}`;
-  // 4. Lowercase the address (this is done by default in the EVM)
+  // 5. Lowercase the address (this is done by default in the EVM)
   address = address.toLowerCase();
   return address;
 }
@@ -34,10 +34,12 @@ export function sanitizeTransactionHash(transactionHash: string): string {
   // 1. Trim the transaction hash
   transactionHash = transactionHash.trim();
   // 2. Remove the 0x prefix if it exists
-  transactionHash = transactionHash.replace(/^0x/, '');
+  transactionHash = transactionHash.replace(/^0x/i, '');
   // 3. Add 0 padding to the left if it's less than 64 characters
   transactionHash = transactionHash.padStart(64, '0');
   // 4. Add 0x prefix if it doesn't have it
   transactionHash = `0x${transactionHash}`;
+  // 5. Lowercase the transaction hash
+  transactionHash = transactionHash.toLowerCase();
   return transactionHash;
 }
